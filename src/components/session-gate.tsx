@@ -22,6 +22,7 @@ interface SessionGateProps {
   children: (context: {
     currentUserId: NonNullable<ReturnType<typeof useSessionGate>["currentUserId"]>;
     changePassword: ReturnType<typeof useSessionGate>["changePassword"];
+    logout: ReturnType<typeof useSessionGate>["lock"];
   }) => React.ReactNode;
 }
 
@@ -36,6 +37,7 @@ export function SessionGate({ children }: SessionGateProps) {
     changePassword,
     hasStoredPassword,
     resolveUsername,
+    lock,
   } = useSessionGate();
 
   const [step, setStep] = useState<AuthStep>("username");
@@ -155,7 +157,7 @@ export function SessionGate({ children }: SessionGateProps) {
   if (status === "unlocked" && currentUserId) {
     return (
       <div className="h-dvh overflow-hidden">
-        {children({ currentUserId, changePassword })}
+        {children({ currentUserId, changePassword, logout: lock })}
       </div>
     );
   }

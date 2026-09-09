@@ -17,6 +17,8 @@ Kaynak: [github.com/noprobono-can/strategic-road-map](https://github.com/noprobo
 - Client-side access gate before the workspace (username + self-serve password; session-based)
 - Per-zone shared notes tagged by author (Okan / Emre / Bora); users can delete only their own notes
 - Per-user company access rules enforced in the client
+- PDF report export for the current company workspace
+- Logout returns to the login screen
 
 ## Stack
 
