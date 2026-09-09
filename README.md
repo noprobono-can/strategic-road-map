@@ -14,6 +14,7 @@ Kaynak: [github.com/noprobono-can/strategic-road-map](https://github.com/noprobo
 - Canvas field data persisted in `localStorage` (survives refresh)
 - Turkish UI labels with English company names and roles preserved
 - Responsive layout: sidebar collapses into a mobile sheet on small screens
+- Client-side access gate before the canvas (session-based; codes managed in source)
 
 ## Stack
 
@@ -59,6 +60,6 @@ Each company canvas includes:
 
 ## Web üzerinden düzenleme
 
-**Strateji içeriği (canlı tuval):** Canlı sitede şirket seçin, kartlara yazın. Veriler tarayıcıda (`localStorage`) saklanır; sayfa yenilense bile kalır. Bu, [tıbbi kenevir tesis simülatörü](https://github.com/noprobono-can/tibbi-kenevir-tesis-simulatoru) ile aynı yaklaşımdır.
+**Strateji içeriği (canlı tuval):** Canlı sitede erişim kodu ile giriş yapın, şirket seçin, kartlara yazın. Veriler tarayıcıda (`localStorage`) saklanır; sayfa yenilense bile kalır. Bu, [tıbbi kenevir tesis simülatörü](https://github.com/noprobono-can/tibbi-kenevir-tesis-simulatoru) ile aynı yaklaşımdır.
 
 **Uygulama kodu:** GitHub’da dosyayı açıp kalem simgesiyle düzenleyin veya Cursor ile commit/push yapın. `main` branch’e push edildiğinde GitHub Actions otomatik olarak GitHub Pages’e yayınlar.
