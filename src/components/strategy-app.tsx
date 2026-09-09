@@ -157,8 +157,8 @@ export function StrategyApp({ currentUserId, changePassword }: StrategyAppProps)
                     {selectedCompany.name}
                   </h1>
                   <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-                    Alanları birlikte dolduracağız. Notlar yalnızca size görünür;
-                    diğer kullanıcıların notlarını göremezsiniz. Veriler
+                    Alanları birlikte dolduracağız. Notlar kullanıcıya göre
+                    etiketlenir; yalnızca kendi notlarınızı silebilirsiniz. Veriler
                     tarayıcıda saklanır.
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">

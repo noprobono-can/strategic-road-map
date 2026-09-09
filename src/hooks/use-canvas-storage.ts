@@ -3,16 +3,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { WorkspaceUserId } from "@/lib/gate-config";
 import {
-  CANVAS_FIELD_KEYS,
   CanvasFieldKey,
   CompanyWorkspaceData,
   EMPTY_COMPANY_DATA,
   LEGACY_STORAGE_KEY,
-  createEmptyZoneNotes,
   normalizeStore,
   STORAGE_KEY,
   WorkspaceStore,
-  ZoneNotes,
   createNote,
 } from "@/lib/canvas-types";
 
@@ -43,22 +40,6 @@ function readStore(): WorkspaceStore {
 
 function writeStore(store: WorkspaceStore) {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
-}
-
-function filterZonesForUser(
-  zones: ZoneNotes,
-  currentUserId: WorkspaceUserId | null,
-): ZoneNotes {
-  if (!currentUserId) {
-    return createEmptyZoneNotes();
-  }
-
-  const filtered = createEmptyZoneNotes();
-  CANVAS_FIELD_KEYS.forEach((key) => {
-    filtered[key] = zones[key].filter((note) => note.authorId === currentUserId);
-  });
-
-  return filtered;
 }
 
 export function useCanvasStorage(companyId: string, currentUserId: WorkspaceUserId | null) {
@@ -143,7 +124,7 @@ export function useCanvasStorage(companyId: string, currentUserId: WorkspaceUser
 
   return {
     status: uiStatus,
-    zones: filterZonesForUser(data.zones, currentUserId),
+    zones: data.zones,
     addZoneNote,
     removeZoneNote,
   };

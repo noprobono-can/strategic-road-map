@@ -15,7 +15,7 @@ Kaynak: [github.com/noprobono-can/strategic-road-map](https://github.com/noprobo
 - Turkish UI labels with English company names and roles preserved
 - Responsive layout: sidebar collapses into a mobile sheet on small screens
 - Client-side access gate before the workspace (username + self-serve password; session-based)
-- Per-zone private notes; each user sees only their own notes
+- Per-zone shared notes tagged by author (Okan / Emre / Bora); users can delete only their own notes
 - Per-user company access rules enforced in the client
 
 ## Stack
@@ -62,6 +62,6 @@ Each company canvas includes:
 
 ## Web üzerinden düzenleme
 
-**Strateji içeriği (canlı workspace):** Canlı sitede kullanıcı adınızı girin. İlk girişte kendi şifrenizi oluşturun; sonraki ziyaretlerde kullanıcı adı ve şifre ile giriş yapın. Şirket seçin, her alana not ekleyin. Notlar yalnızca size görünür. Veriler tarayıcıda (`localStorage`) saklanır.
+**Strateji içeriği (canlı workspace):** Canlı sitede kullanıcı adınızı girin. İlk girişte kendi şifrenizi oluşturun; sonraki ziyaretlerde kullanıcı adı ve şifre ile giriş yapın. Şirket seçin, her alana not ekleyin. Notlar yazar etiketiyle paylaşılır; yalnızca kendi notlarınızı silebilirsiniz. Veriler tarayıcıda (`localStorage`) saklanır.
 
 **Uygulama kodu:** GitHub’da dosyayı açıp kalem simgesiyle düzenleyin veya Cursor ile commit/push yapın. `main` branch’e push edildiğinde GitHub Actions otomatik olarak GitHub Pages’e yayınlar.
