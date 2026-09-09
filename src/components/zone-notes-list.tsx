@@ -57,11 +57,11 @@ export function ZoneNotesList({
           onChange={(event) => setDraft(event.target.value)}
           disabled={disabled || !currentUserId}
           placeholder="Yeni not yazın…"
-          className="flex h-9 min-w-0 flex-1 rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50"
+          className="flex h-11 min-w-0 flex-1 rounded-lg border border-input bg-background px-3.5 py-2.5 text-base outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50"
         />
         <Button
           type="submit"
-          size={compact ? "sm" : "default"}
+          size={compact ? "default" : "lg"}
           disabled={disabled || !currentUserId || draft.trim().length === 0}
         >
           <Plus className="size-4" />
@@ -70,14 +70,14 @@ export function ZoneNotesList({
       </form>
 
       {groupedNotes.length === 0 ? (
-        <p className="rounded-lg border border-dashed px-3 py-3 text-sm text-muted-foreground">
+        <p className="rounded-lg border border-dashed px-3.5 py-3.5 text-base text-muted-foreground">
           Henüz not eklenmedi. Aşağıdan bir not ekleyebilirsiniz.
         </p>
       ) : (
         <div className="space-y-3">
           {groupedNotes.map((group) => (
             <div key={group.authorId} className="space-y-2">
-              <Badge variant="outline" className="text-[11px]">
+              <Badge variant="outline" className="text-xs">
                 {group.label}
               </Badge>
               <ul className="space-y-2">
@@ -90,9 +90,9 @@ export function ZoneNotesList({
                   return (
                     <li
                       key={note.id}
-                      className="flex items-start gap-2 rounded-lg border bg-background px-3 py-2.5"
+                      className="flex items-start gap-2 rounded-lg border bg-background px-3.5 py-3"
                     >
-                      <p className="min-w-0 flex-1 text-sm leading-relaxed">{note.text}</p>
+                      <p className="min-w-0 flex-1 text-base leading-relaxed">{note.text}</p>
                       {canDelete ? (
                         <Button
                           type="button"

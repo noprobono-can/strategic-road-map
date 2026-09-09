@@ -96,7 +96,7 @@ export function ChangePasswordSheet({ changePassword }: ChangePasswordSheetProps
 
         <form className="flex flex-1 flex-col gap-4 px-4 pb-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <label htmlFor="current-password" className="text-sm font-medium">
+            <label htmlFor="current-password" className="text-base font-medium">
               Mevcut şifre
             </label>
             <input
@@ -112,12 +112,12 @@ export function ChangePasswordSheet({ changePassword }: ChangePasswordSheetProps
                   setError(null);
                 }
               }}
-              className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="flex h-11 w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-base outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="new-password" className="text-sm font-medium">
+            <label htmlFor="new-password" className="text-base font-medium">
               Yeni şifre
             </label>
             <input
@@ -133,12 +133,12 @@ export function ChangePasswordSheet({ changePassword }: ChangePasswordSheetProps
                   setError(null);
                 }
               }}
-              className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="flex h-11 w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-base outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="confirm-new-password" className="text-sm font-medium">
+            <label htmlFor="confirm-new-password" className="text-base font-medium">
               Yeni şifre tekrar
             </label>
             <input
@@ -154,26 +154,26 @@ export function ChangePasswordSheet({ changePassword }: ChangePasswordSheetProps
                   setError(null);
                 }
               }}
-              className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="flex h-11 w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-base outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
             />
           </div>
 
           {error ? (
             <p
               role="alert"
-              className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+              className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2.5 text-base text-destructive"
             >
               {error}
             </p>
           ) : null}
 
           {success ? (
-            <p className="rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-sm text-foreground">
+            <p className="rounded-lg border border-primary/20 bg-primary/5 px-3 py-2.5 text-base text-foreground">
               {success}
             </p>
           ) : null}
 
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" size="lg" disabled={isSubmitting}>
             Şifreyi güncelle
           </Button>
         </form>

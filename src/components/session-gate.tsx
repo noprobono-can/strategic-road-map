@@ -17,6 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface SessionGateProps {
   children: (context: {
@@ -138,8 +139,12 @@ export function SessionGate({ children }: SessionGateProps) {
 
   if (status === "loading") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-4">
-        <Card className="w-full max-w-md">
+      <div className="relative min-h-screen bg-background">
+        <div className="absolute top-4 right-4 z-10">
+          <ThemeToggle />
+        </div>
+        <div className="flex min-h-screen items-center justify-center px-4">
+          <Card className="w-full max-w-md">
           <CardHeader className="space-y-3">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-8 w-48" />
@@ -150,6 +155,7 @@ export function SessionGate({ children }: SessionGateProps) {
             <Skeleton className="h-10 w-full" />
           </CardContent>
         </Card>
+        </div>
       </div>
     );
   }
@@ -163,19 +169,23 @@ export function SessionGate({ children }: SessionGateProps) {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/5 via-background to-background px-4">
+    <div className="relative min-h-screen bg-background">
+      <div className="absolute top-4 right-4 z-10">
+        <ThemeToggle />
+      </div>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/5 via-background to-background px-4">
       <Card className="w-full max-w-md border-primary/20 shadow-lg">
         <CardHeader className="gap-3">
           <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
             <LockKeyhole className="size-5" />
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
               Grup Strateji Workspace
             </p>
-            <CardTitle className="text-2xl">{title}</CardTitle>
+            <CardTitle className="text-3xl">{title}</CardTitle>
           </div>
-          <CardDescription className="leading-relaxed">
+          <CardDescription className="text-base leading-relaxed">
             {step === "setup"
               ? "İlk girişiniz için kendi şifrenizi belirleyin. Şifre yalnızca bu tarayıcıda güvenli biçimde saklanır."
               : step === "login"
@@ -188,7 +198,7 @@ export function SessionGate({ children }: SessionGateProps) {
             <div className="space-y-2">
               <label
                 htmlFor="username"
-                className="text-sm font-medium leading-none"
+                className="text-base font-medium leading-none"
               >
                 Kullanıcı adı
               </label>
@@ -205,7 +215,7 @@ export function SessionGate({ children }: SessionGateProps) {
                     setError(null);
                   }
                 }}
-                className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-70"
+                className="flex h-11 w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-base outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-70"
                 placeholder="Kullanıcı adınız"
               />
             </div>
@@ -215,7 +225,7 @@ export function SessionGate({ children }: SessionGateProps) {
                 <div className="space-y-2">
                   <label
                     htmlFor="password"
-                    className="text-sm font-medium leading-none"
+                    className="text-base font-medium leading-none"
                   >
                     {isSetup ? "Yeni şifre" : "Şifre"}
                   </label>
@@ -232,7 +242,7 @@ export function SessionGate({ children }: SessionGateProps) {
                         setError(null);
                       }
                     }}
-                    className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50"
+                    className="flex h-11 w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-base outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50"
                     placeholder={isSetup ? "En az 8 karakter" : "Şifreniz"}
                   />
                 </div>
@@ -241,7 +251,7 @@ export function SessionGate({ children }: SessionGateProps) {
                   <div className="space-y-2">
                     <label
                       htmlFor="confirm-password"
-                      className="text-sm font-medium leading-none"
+                      className="text-base font-medium leading-none"
                     >
                       Şifre tekrar
                     </label>
@@ -258,10 +268,10 @@ export function SessionGate({ children }: SessionGateProps) {
                           setError(null);
                         }
                       }}
-                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50"
+                      className="flex h-11 w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-base outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50"
                       placeholder="Şifrenizi tekrar yazın"
                     />
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       En az {MIN_PASSWORD_LENGTH} karakter kullanın.
                     </p>
                   </div>
@@ -272,14 +282,14 @@ export function SessionGate({ children }: SessionGateProps) {
             {error ? (
               <p
                 role="alert"
-                className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2.5 text-base text-destructive"
               >
                 {error}
               </p>
             ) : null}
 
             <div className="flex flex-col gap-2">
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
+              <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
                 {step === "username"
                   ? "Devam et"
                   : isSetup
@@ -300,13 +310,14 @@ export function SessionGate({ children }: SessionGateProps) {
               ) : null}
             </div>
 
-            <p className="text-xs leading-relaxed text-muted-foreground">
+            <p className="text-sm leading-relaxed text-muted-foreground">
               Bu yalnızca tarayıcı tarafında basit bir kilit mekanizmasıdır;
               gerçek kimlik doğrulama değildir.
             </p>
           </form>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

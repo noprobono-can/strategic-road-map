@@ -7,6 +7,7 @@ import { ZoneNotes } from "@/lib/canvas-types";
 import { useSessionGate } from "@/hooks/use-session-gate";
 import { downloadWorkspacePdfReport } from "@/lib/workspace-pdf-report";
 import { ChangePasswordSheet } from "@/components/change-password-sheet";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 
 interface WorkspaceToolbarProps {
@@ -58,6 +59,7 @@ export function WorkspaceToolbar({
           {isExporting ? "PDF hazırlanıyor…" : "Rapor · PDF indir"}
         </Button>
         <ChangePasswordSheet changePassword={changePassword} />
+        <ThemeToggle />
         <Button
           type="button"
           variant="outline"
@@ -70,7 +72,7 @@ export function WorkspaceToolbar({
         </Button>
       </div>
       {exportError ? (
-        <p role="alert" className="max-w-xs text-right text-xs text-destructive">
+        <p role="alert" className="max-w-xs text-right text-sm text-destructive">
           {exportError}
         </p>
       ) : null}

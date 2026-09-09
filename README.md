@@ -19,6 +19,8 @@ Kaynak: [github.com/noprobono-can/strategic-road-map](https://github.com/noprobo
 - Per-user company access rules enforced in the client
 - PDF report export for the current company workspace
 - Logout returns to the login screen
+- Light / dark theme toggle persisted in `localStorage` (system preference on first visit)
+- Larger, higher-contrast typography across login and workspace
 
 ## Stack
 

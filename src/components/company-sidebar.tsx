@@ -29,20 +29,16 @@ export function CompanySidebar({
     >
       <div className="px-4 py-5">
         <div className="flex items-center gap-2">
-          <Building2 className="size-4 text-sidebar-primary" />
+          <Building2 className="size-5 text-sidebar-primary" />
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
               Grup
             </p>
-            <h2 className="text-sm font-semibold leading-tight">
+            <h2 className="text-base font-semibold leading-tight">
               Strateji Workspace
             </h2>
           </div>
         </div>
-        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-          Şirket seçin; sağdaki workspace'te stratejik alanları birlikte
-          dolduracağız.
-        </p>
       </div>
 
       <Separator />
@@ -58,24 +54,24 @@ export function CompanySidebar({
                 type="button"
                 onClick={() => onSelect(company.id)}
                 className={cn(
-                  "w-full rounded-lg border px-3 py-3 text-left transition-colors",
+                  "w-full rounded-lg border px-3.5 py-3.5 text-left transition-colors",
                   isSelected
                     ? "border-sidebar-primary bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
                     : "border-transparent hover:border-sidebar-border hover:bg-sidebar-accent/60",
                 )}
               >
                 <div className="flex items-start justify-between gap-2">
-                  <span className="text-sm font-medium leading-snug">
+                  <span className="text-base font-medium leading-snug">
                     {company.name}
                   </span>
                   <Badge
                     variant={isSelected ? "default" : "secondary"}
-                    className="shrink-0 text-[10px]"
+                    className="shrink-0 text-xs"
                   >
                     {index + 1}
                   </Badge>
                 </div>
-                <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
                   {company.role}
                 </p>
               </button>

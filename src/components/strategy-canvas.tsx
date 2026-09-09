@@ -37,8 +37,8 @@ function CanvasErrorState() {
       <CardHeader className="flex flex-row items-start gap-3 space-y-0">
         <AlertCircle className="mt-0.5 size-5 text-destructive" />
         <div>
-          <CardTitle className="text-base">Veriler yüklenemedi</CardTitle>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          <CardTitle className="text-lg">Veriler yüklenemedi</CardTitle>
+          <p className="mt-2 text-base leading-relaxed text-muted-foreground">
             Tarayıcı depolamasına erişilemiyor. Gizli mod, depolama
             kısıtlaması veya tarayıcı ayarları nedeniyle workspace
             kaydedilemeyebilir. Sayfayı yenileyin veya normal bir tarayıcı
@@ -62,7 +62,7 @@ export function StrategyCanvas({
     return (
       <div className="space-y-4">
         <div className="rounded-xl border bg-muted/30 px-4 py-3">
-          <p className="text-sm text-muted-foreground">Workspace yükleniyor…</p>
+          <p className="text-base text-muted-foreground">Workspace yükleniyor…</p>
         </div>
         <CanvasSkeleton />
       </div>
@@ -80,27 +80,27 @@ export function StrategyCanvas({
       <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-primary/5 via-background to-background">
         <CardHeader className="gap-3 pb-4">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="outline" className="text-[11px]">
+            <Badge variant="outline" className="text-xs">
               Seçili varlık
             </Badge>
-            <Badge variant="secondary" className="gap-1 text-[11px]">
-              <Sparkles className="size-3" />
+            <Badge variant="secondary" className="gap-1 text-xs">
+              <Sparkles className="size-3.5" />
               Canlı doldurma
             </Badge>
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
               Varlık adı
             </p>
-            <CardTitle className="text-2xl font-semibold tracking-tight">
+            <CardTitle className="text-3xl font-semibold tracking-tight">
               {company.name}
             </CardTitle>
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
               Birincil rol
             </p>
-            <p className="mt-1 max-w-3xl text-sm leading-relaxed text-foreground/90">
+            <p className="mt-1.5 max-w-3xl text-base leading-relaxed text-foreground">
               {company.role}
             </p>
           </div>

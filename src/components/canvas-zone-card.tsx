@@ -38,18 +38,18 @@ export function CanvasZoneCard({
   return (
     <Card
       className={cn(
-        "flex h-full min-h-[220px] flex-col border-dashed bg-card/80 shadow-none",
+        "flex h-full min-h-[240px] flex-col border-dashed bg-card/80 shadow-none",
         className,
       )}
     >
       <CardHeader className="gap-1 pb-3">
-        <CardTitle className="text-sm font-semibold">{labelTr}</CardTitle>
+        <CardTitle className="text-base font-semibold">{labelTr}</CardTitle>
         {labelEn ? (
-          <CardDescription className="text-[11px] uppercase tracking-wide">
+          <CardDescription className="text-xs uppercase tracking-wide">
             {labelEn}
           </CardDescription>
         ) : null}
-        <CardDescription className="text-xs leading-relaxed">
+        <CardDescription className="text-sm leading-relaxed">
           {helperTr}
         </CardDescription>
       </CardHeader>
@@ -92,16 +92,16 @@ export function RoadmapZoneCard({
   return (
     <Card
       className={cn(
-        "flex h-full min-h-[260px] flex-col border-dashed bg-card/80 shadow-none",
+        "flex h-full min-h-[280px] flex-col border-dashed bg-card/80 shadow-none",
         className,
       )}
     >
       <CardHeader className="gap-1 pb-3">
-        <CardTitle className="text-sm font-semibold">Yol Haritası</CardTitle>
-        <CardDescription className="text-[11px] uppercase tracking-wide">
+        <CardTitle className="text-base font-semibold">Yol Haritası</CardTitle>
+        <CardDescription className="text-xs uppercase tracking-wide">
           Now / Next / Later roadmap
         </CardDescription>
-        <CardDescription className="text-xs leading-relaxed">
+        <CardDescription className="text-sm leading-relaxed">
           Şimdi, sonra ve ileride odaklanılacak adımlar.
         </CardDescription>
       </CardHeader>
@@ -109,11 +109,11 @@ export function RoadmapZoneCard({
         {columns.map((column) => (
           <div key={column.key} className="flex min-h-[180px] flex-col gap-2">
             <div>
-              <p className="text-xs font-semibold">{column.labelTr}</p>
-              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              <p className="text-sm font-semibold">{column.labelTr}</p>
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">
                 {column.labelEn}
               </p>
-              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                 {column.helperTr}
               </p>
             </div>

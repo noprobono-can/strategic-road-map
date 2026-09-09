@@ -123,13 +123,13 @@ export function StrategyApp({
     <div className="flex h-full min-h-0 flex-col overflow-hidden bg-background">
       <header className="flex shrink-0 items-start justify-between gap-3 border-b px-4 py-3 lg:px-6">
         <div className="min-w-0">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
             Grup Strateji Workspace
           </p>
-          <h1 className="truncate text-sm font-semibold lg:text-base">
+          <h1 className="truncate text-base font-semibold lg:text-lg">
             {selectedCompany.name}
           </h1>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Oturum: {getUserLabel(currentUserId)}
           </p>
         </div>
@@ -158,16 +158,15 @@ export function StrategyApp({
         <main className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain">
           <div className="mx-auto max-w-7xl px-4 py-5 lg:px-6 lg:py-6">
             <div className="mb-5 hidden lg:block">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
                 Strateji workspace
               </p>
-              <h2 className="text-xl font-semibold tracking-tight">
+              <h2 className="text-2xl font-semibold tracking-tight">
                 {selectedCompany.name}
               </h2>
-              <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-                Alanları birlikte dolduracağız. Notlar kullanıcıya göre
-                etiketlenir; yalnızca kendi notlarınızı silebilirsiniz. Veriler
-                tarayıcıda saklanır.
+              <p className="mt-2 max-w-2xl text-base leading-relaxed text-muted-foreground">
+                Notlar kullanıcıya göre etiketlenir; yalnızca kendi notlarınızı
+                silebilirsiniz. Veriler tarayıcıda saklanır.
               </p>
             </div>
 
