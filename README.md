@@ -2,6 +2,10 @@
 
 Interaktif strateji tuvali for seven group companies. Select a company from the sidebar and fill in strategic canvas zones together during live working sessions.
 
+Canlı site (GitHub Pages): [noprobono-can.github.io/strategic-road-map](https://noprobono-can.github.io/strategic-road-map/)
+
+Kaynak: [github.com/noprobono-can/strategic-road-map](https://github.com/noprobono-can/strategic-road-map)
+
 ## Features
 
 - Left sidebar with seven group companies (fixed order)
@@ -34,6 +38,12 @@ npm run build
 npm start
 ```
 
+GitHub Pages static export:
+
+```bash
+npm run build:pages
+```
+
 ## Canvas zones
 
 Each company canvas includes:
@@ -46,3 +56,9 @@ Each company canvas includes:
 - Group synergies
 - Risks & constraints
 - Success metrics
+
+## Web üzerinden düzenleme
+
+**Strateji içeriği (canlı tuval):** Canlı sitede şirket seçin, kartlara yazın. Veriler tarayıcıda (`localStorage`) saklanır; sayfa yenilense bile kalır. Bu, [tıbbi kenevir tesis simülatörü](https://github.com/noprobono-can/tibbi-kenevir-tesis-simulatoru) ile aynı yaklaşımdır.
+
+**Uygulama kodu:** GitHub’da dosyayı açıp kalem simgesiyle düzenleyin veya Cursor ile commit/push yapın. `main` branch’e push edildiğinde GitHub Actions otomatik olarak GitHub Pages’e yayınlar.
