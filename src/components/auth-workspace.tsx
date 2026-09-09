@@ -6,7 +6,9 @@ import { StrategyApp } from "@/components/strategy-app";
 export function AuthWorkspace() {
   return (
     <SessionGate>
-      {(currentUserId) => <StrategyApp currentUserId={currentUserId} />}
+      {({ currentUserId, changePassword }) => (
+        <StrategyApp currentUserId={currentUserId} changePassword={changePassword} />
+      )}
     </SessionGate>
   );
 }

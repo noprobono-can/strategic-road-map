@@ -10,35 +10,26 @@ export interface GateSession {
 export interface WorkspaceUserDefinition {
   id: WorkspaceUserId;
   label: string;
-  password: string;
 }
 
 export const WORKSPACE_USERS: WorkspaceUserDefinition[] = [
-  { id: "okan", label: "Okan", password: "ebo" },
-  { id: "emre", label: "Emre", password: "ebo" },
-  { id: "bora", label: "Bora", password: "ebo" },
+  { id: "okan", label: "Okan" },
+  { id: "emre", label: "Emre" },
+  { id: "bora", label: "Bora" },
 ];
 
 export function getUserLabel(userId: WorkspaceUserId): string {
   return WORKSPACE_USERS.find((user) => user.id === userId)?.label ?? userId;
 }
 
-export function validateCredentials(
-  username: string,
-  password: string,
-): WorkspaceUserId | null {
+export function resolveUsername(username: string): WorkspaceUserId | null {
   const normalizedUsername = username.trim().toLowerCase();
-  const normalizedPassword = password.trim();
 
-  if (!normalizedUsername || !normalizedPassword) {
+  if (!normalizedUsername) {
     return null;
   }
 
-  const user = WORKSPACE_USERS.find(
-    (entry) => entry.id === normalizedUsername && entry.password === normalizedPassword,
-  );
-
-  return user?.id ?? null;
+  return WORKSPACE_USERS.find((entry) => entry.id === normalizedUsername)?.id ?? null;
 }
 
 export function readGateSession(): GateSession | null {

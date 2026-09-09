@@ -5,10 +5,16 @@ import {
   clearGateSession,
   GateSession,
   readGateSession,
-  validateCredentials,
+  resolveUsername,
   WorkspaceUserId,
   writeGateSession,
 } from "@/lib/gate-config";
+import {
+  changeStoredPassword,
+  createStoredPassword,
+  hasStoredPassword,
+  verifyStoredPassword,
+} from "@/lib/password-auth";
 
 type GateStatus = "loading" | "locked" | "unlocked";
 
@@ -22,23 +28,64 @@ export function useSessionGate() {
     setStatus(existing ? "unlocked" : "locked");
   }, []);
 
-  const unlock = useCallback((username: string, password: string) => {
-    const userId = validateCredentials(username, password);
-    if (!userId) {
+  const completeUnlock = useCallback((userId: WorkspaceUserId) => {
+    writeGateSession(userId);
+    const nextSession = readGateSession();
+    setSession(nextSession);
+    setStatus("unlocked");
+    return true;
+  }, []);
+
+  const login = useCallback(async (username: string, password: string) => {
+    const userId = resolveUsername(username);
+    if (!userId || !hasStoredPassword(userId)) {
       return false;
     }
 
     try {
-      writeGateSession(userId);
-      const nextSession = readGateSession();
-      setSession(nextSession);
-      setStatus("unlocked");
-      return true;
+      const valid = await verifyStoredPassword(userId, password);
+      if (!valid) {
+        return false;
+      }
+
+      return completeUnlock(userId);
     } catch {
-      setStatus("locked");
       return false;
     }
-  }, []);
+  }, [completeUnlock]);
+
+  const setupPassword = useCallback(
+    async (username: string, password: string) => {
+      const userId = resolveUsername(username);
+      if (!userId || hasStoredPassword(userId)) {
+        return false;
+      }
+
+      try {
+        await createStoredPassword(userId, password);
+        return completeUnlock(userId);
+      } catch {
+        return false;
+      }
+    },
+    [completeUnlock],
+  );
+
+  const changePassword = useCallback(
+    async (currentPassword: string, newPassword: string) => {
+      const userId = session?.userId;
+      if (!userId) {
+        return "not-logged-in" as const;
+      }
+
+      try {
+        return await changeStoredPassword(userId, currentPassword, newPassword);
+      } catch {
+        return "invalid-current" as const;
+      }
+    },
+    [session?.userId],
+  );
 
   const lock = useCallback(() => {
     try {
@@ -55,7 +102,11 @@ export function useSessionGate() {
     status,
     session,
     currentUserId: session?.userId ?? null,
-    unlock,
+    login,
+    setupPassword,
+    changePassword,
+    hasStoredPassword,
+    resolveUsername,
     lock,
   };
 }

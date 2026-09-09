@@ -1,8 +1,13 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { LockKeyhole } from "lucide-react";
 import { useSessionGate } from "@/hooks/use-session-gate";
+import { WorkspaceUserId } from "@/lib/gate-config";
+import {
+  MIN_PASSWORD_LENGTH,
+  validatePasswordStrength,
+} from "@/lib/password-auth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,24 +19,119 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface SessionGateProps {
-  children: (currentUserId: NonNullable<ReturnType<typeof useSessionGate>["currentUserId"]>) => React.ReactNode;
+  children: (context: {
+    currentUserId: NonNullable<ReturnType<typeof useSessionGate>["currentUserId"]>;
+    changePassword: ReturnType<typeof useSessionGate>["changePassword"];
+  }) => React.ReactNode;
 }
 
+type AuthStep = "username" | "login" | "setup";
+
 export function SessionGate({ children }: SessionGateProps) {
-  const { status, currentUserId, unlock } = useSessionGate();
+  const {
+    status,
+    currentUserId,
+    login,
+    setupPassword,
+    changePassword,
+    hasStoredPassword,
+    resolveUsername,
+  } = useSessionGate();
+
+  const [step, setStep] = useState<AuthStep>("username");
+  const [resolvedUserId, setResolvedUserId] = useState<WorkspaceUserId | null>(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const isSetup = step === "setup";
 
-    if (unlock(username, password)) {
-      setError(null);
+  const title = useMemo(() => {
+    if (step === "setup") {
+      return "Şifre oluştur";
+    }
+
+    if (step === "login") {
+      return "Giriş";
+    }
+
+    return "Giriş";
+  }, [step]);
+
+  const resetPasswordFields = () => {
+    setPassword("");
+    setConfirmPassword("");
+  };
+
+  const handleUsernameContinue = () => {
+    const userId = resolveUsername(username);
+    if (!userId) {
+      setError("Bu kullanıcı adı tanınmıyor. Yalnızca kayıtlı hesaplar giriş yapabilir.");
+      setResolvedUserId(null);
       return;
     }
 
-    setError("Kullanıcı adı veya şifre hatalı. Lütfen tekrar deneyin.");
+    setResolvedUserId(userId);
+    resetPasswordFields();
+    setError(null);
+    setStep(hasStoredPassword(userId) ? "login" : "setup");
+  };
+
+  const handleBackToUsername = () => {
+    setStep("username");
+    setResolvedUserId(null);
+    resetPasswordFields();
+    setError(null);
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
+
+    if (step === "username") {
+      handleUsernameContinue();
+      return;
+    }
+
+    const userId = resolvedUserId ?? resolveUsername(username);
+    if (!userId) {
+      setError("Bu kullanıcı adı tanınmıyor. Yalnızca kayıtlı hesaplar giriş yapabilir.");
+      setStep("username");
+      return;
+    }
+
+    const strengthError = validatePasswordStrength(password);
+    if (strengthError) {
+      setError(strengthError);
+      return;
+    }
+
+    if (step === "setup") {
+      if (password !== confirmPassword) {
+        setError("Şifreler eşleşmiyor. Lütfen tekrar deneyin.");
+        return;
+      }
+
+      setIsSubmitting(true);
+      const success = await setupPassword(username, password);
+      setIsSubmitting(false);
+
+      if (!success) {
+        setError("Şifre oluşturulamadı. Lütfen tekrar deneyin.");
+      }
+
+      return;
+    }
+
+    setIsSubmitting(true);
+    const success = await login(username, password);
+    setIsSubmitting(false);
+
+    if (!success) {
+      setError("Kullanıcı adı veya şifre hatalı. Lütfen tekrar deneyin.");
+    }
   };
 
   if (status === "loading") {
@@ -53,7 +153,11 @@ export function SessionGate({ children }: SessionGateProps) {
   }
 
   if (status === "unlocked" && currentUserId) {
-    return <div className="h-dvh overflow-hidden">{children(currentUserId)}</div>;
+    return (
+      <div className="h-dvh overflow-hidden">
+        {children({ currentUserId, changePassword })}
+      </div>
+    );
   }
 
   return (
@@ -67,11 +171,14 @@ export function SessionGate({ children }: SessionGateProps) {
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Grup Strateji Workspace
             </p>
-            <CardTitle className="text-2xl">Giriş</CardTitle>
+            <CardTitle className="text-2xl">{title}</CardTitle>
           </div>
           <CardDescription className="leading-relaxed">
-            Devam etmek için kullanıcı adınızı ve erişim kodunu girin. Başarılı
-            giriş bu oturum boyunca hatırlanır; sayfa yenilense bile açık kalır.
+            {step === "setup"
+              ? "İlk girişiniz için kendi şifrenizi belirleyin. Şifre yalnızca bu tarayıcıda güvenli biçimde saklanır."
+              : step === "login"
+                ? "Devam etmek için kullanıcı adınızı ve şifrenizi girin. Başarılı giriş bu oturum boyunca hatırlanır."
+                : "Devam etmek için kullanıcı adınızı girin. İlk girişte kendi şifrenizi oluşturursunuz."}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -88,40 +195,77 @@ export function SessionGate({ children }: SessionGateProps) {
                 name="username"
                 autoComplete="username"
                 value={username}
+                readOnly={step !== "username"}
+                disabled={isSubmitting}
                 onChange={(event) => {
                   setUsername(event.target.value);
                   if (error) {
                     setError(null);
                   }
                 }}
-                className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-70"
                 placeholder="Kullanıcı adınız"
               />
             </div>
 
-            <div className="space-y-2">
-              <label
-                htmlFor="password"
-                className="text-sm font-medium leading-none"
-              >
-                Erişim kodu
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(event) => {
-                  setPassword(event.target.value);
-                  if (error) {
-                    setError(null);
-                  }
-                }}
-                className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-                placeholder="Erişim kodunuzu yazın"
-              />
-            </div>
+            {step !== "username" ? (
+              <>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="password"
+                    className="text-sm font-medium leading-none"
+                  >
+                    {isSetup ? "Yeni şifre" : "Şifre"}
+                  </label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete={isSetup ? "new-password" : "current-password"}
+                    value={password}
+                    disabled={isSubmitting}
+                    onChange={(event) => {
+                      setPassword(event.target.value);
+                      if (error) {
+                        setError(null);
+                      }
+                    }}
+                    className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50"
+                    placeholder={isSetup ? "En az 8 karakter" : "Şifreniz"}
+                  />
+                </div>
+
+                {isSetup ? (
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="confirm-password"
+                      className="text-sm font-medium leading-none"
+                    >
+                      Şifre tekrar
+                    </label>
+                    <input
+                      id="confirm-password"
+                      name="confirmPassword"
+                      type="password"
+                      autoComplete="new-password"
+                      value={confirmPassword}
+                      disabled={isSubmitting}
+                      onChange={(event) => {
+                        setConfirmPassword(event.target.value);
+                        if (error) {
+                          setError(null);
+                        }
+                      }}
+                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50"
+                      placeholder="Şifrenizi tekrar yazın"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      En az {MIN_PASSWORD_LENGTH} karakter kullanın.
+                    </p>
+                  </div>
+                ) : null}
+              </>
+            ) : null}
 
             {error ? (
               <p
@@ -132,9 +276,27 @@ export function SessionGate({ children }: SessionGateProps) {
               </p>
             ) : null}
 
-            <Button type="submit" className="w-full">
-              Devam et
-            </Button>
+            <div className="flex flex-col gap-2">
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {step === "username"
+                  ? "Devam et"
+                  : isSetup
+                    ? "Şifre oluştur"
+                    : "Giriş yap"}
+              </Button>
+
+              {step !== "username" ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full"
+                  disabled={isSubmitting}
+                  onClick={handleBackToUsername}
+                >
+                  Kullanıcı adını değiştir
+                </Button>
+              ) : null}
+            </div>
 
             <p className="text-xs leading-relaxed text-muted-foreground">
               Bu yalnızca tarayıcı tarafında basit bir kilit mekanizmasıdır;

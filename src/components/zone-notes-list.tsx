@@ -1,13 +1,10 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
-import { getUserLabel, WorkspaceUserId } from "@/lib/gate-config";
+import { WorkspaceUserId } from "@/lib/gate-config";
 import { WorkspaceNote } from "@/lib/canvas-types";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-
-const AUTHOR_ORDER: WorkspaceUserId[] = ["okan", "emre", "bora"];
 
 interface ZoneNotesListProps {
   notes: WorkspaceNote[];
@@ -36,11 +33,13 @@ export function ZoneNotesList({
     }
   };
 
-  const groupedNotes = AUTHOR_ORDER.map((authorId) => ({
-    authorId,
-    label: getUserLabel(authorId),
-    notes: notes.filter((note) => note.authorId === authorId),
-  })).filter((group) => group.notes.length > 0);
+  const visibleNotes = useMemo(
+    () =>
+      currentUserId
+        ? notes.filter((note) => note.authorId === currentUserId)
+        : [],
+    [currentUserId, notes],
+  );
 
   return (
     <div className="flex flex-1 flex-col gap-3">
@@ -65,49 +64,33 @@ export function ZoneNotesList({
         </Button>
       </form>
 
-      {groupedNotes.length === 0 ? (
+      {visibleNotes.length === 0 ? (
         <p className="rounded-lg border border-dashed px-3 py-3 text-sm text-muted-foreground">
           Henüz not eklenmedi. Aşağıdan bir not ekleyebilirsiniz.
         </p>
       ) : (
-        <div className="space-y-3">
-          {groupedNotes.map((group) => (
-            <div key={group.authorId} className="space-y-2">
-              <Badge variant="outline" className="text-[11px]">
-                {group.label}
-              </Badge>
-              <ul className="space-y-2">
-                {group.notes.map((note) => {
-                  const canDelete =
-                    !disabled &&
-                    currentUserId !== null &&
-                    note.authorId === currentUserId;
-
-                  return (
-                    <li
-                      key={note.id}
-                      className="flex items-start gap-2 rounded-lg border bg-background px-3 py-2.5"
-                    >
-                      <p className="min-w-0 flex-1 text-sm leading-relaxed">{note.text}</p>
-                      {canDelete ? (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon-sm"
-                          aria-label="Notu sil"
-                          onClick={() => onRemoveNote(note.id)}
-                          className="shrink-0 text-muted-foreground hover:text-destructive"
-                        >
-                          <Trash2 className="size-4" />
-                        </Button>
-                      ) : null}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+        <ul className="space-y-2">
+          {visibleNotes.map((note) => (
+            <li
+              key={note.id}
+              className="flex items-start gap-2 rounded-lg border bg-background px-3 py-2.5"
+            >
+              <p className="min-w-0 flex-1 text-sm leading-relaxed">{note.text}</p>
+              {!disabled && currentUserId ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Notu sil"
+                  onClick={() => onRemoveNote(note.id)}
+                  className="shrink-0 text-muted-foreground hover:text-destructive"
+                >
+                  <Trash2 className="size-4" />
+                </Button>
+              ) : null}
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );
