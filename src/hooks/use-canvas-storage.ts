@@ -30,18 +30,20 @@ function writeStore(store: CanvasStore) {
 }
 
 export function useCanvasStorage(companyId: string) {
-  const [status, setStatus] = useState<StorageStatus>("loading");
+  const [status, setStatus] = useState<Exclude<StorageStatus, "loading">>("ready");
   const [store, setStore] = useState<CanvasStore>({});
   const [fields, setFields] = useState<CanvasFields>(EMPTY_CANVAS);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     try {
       const loaded = readStore();
       setStore(loaded);
       setFields(loaded[companyId] ?? EMPTY_CANVAS);
-      setStatus("ready");
+      setIsHydrated(true);
     } catch {
       setStatus("error");
+      setIsHydrated(true);
     }
   }, [companyId]);
 
@@ -64,5 +66,7 @@ export function useCanvasStorage(companyId: string) {
     [companyId],
   );
 
-  return { status, fields, updateField };
+  const uiStatus: StorageStatus = !isHydrated ? "loading" : status;
+
+  return { status: uiStatus, fields, updateField };
 }
