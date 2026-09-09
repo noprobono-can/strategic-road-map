@@ -54,7 +54,7 @@ export function SessionGate({ children }: SessionGateProps) {
   }
 
   if (status === "unlocked") {
-    return <>{children}</>;
+    return <div className="h-dvh overflow-hidden">{children}</div>;
   }
 
   return (
@@ -66,7 +66,7 @@ export function SessionGate({ children }: SessionGateProps) {
           </div>
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Grup Strateji Tuvali
+              Grup Strateji Workspace
             </p>
             <CardTitle className="text-2xl">Giriş</CardTitle>
           </div>

@@ -1,6 +1,6 @@
-# Grup Strateji Tuvali
+# Grup Strateji Workspace
 
-Interaktif strateji tuvali for seven group companies. Select a company from the sidebar and fill in strategic canvas zones together during live working sessions.
+Interaktif strateji workspace for seven group companies. Select a company from the sidebar and fill in strategic canvas zones together during live working sessions.
 
 Canlı site (GitHub Pages): [noprobono-can.github.io/strategic-road-map](https://noprobono-can.github.io/strategic-road-map/)
 
@@ -60,6 +60,6 @@ Each company canvas includes:
 
 ## Web üzerinden düzenleme
 
-**Strateji içeriği (canlı tuval):** Canlı sitede erişim kodu ile giriş yapın, şirket seçin, kartlara yazın. Veriler tarayıcıda (`localStorage`) saklanır; sayfa yenilense bile kalır. Bu, [tıbbi kenevir tesis simülatörü](https://github.com/noprobono-can/tibbi-kenevir-tesis-simulatoru) ile aynı yaklaşımdır.
+**Strateji içeriği (canlı workspace):** Canlı sitede erişim kodu ile giriş yapın, şirket seçin, kartlara yazın. Veriler tarayıcıda (`localStorage`) saklanır; sayfa yenilense bile kalır. Bu, [tıbbi kenevir tesis simülatörü](https://github.com/noprobono-can/tibbi-kenevir-tesis-simulatoru) ile aynı yaklaşımdır.
 
 **Uygulama kodu:** GitHub’da dosyayı açıp kalem simgesiyle düzenleyin veya Cursor ile commit/push yapın. `main` branch’e push edildiğinde GitHub Actions otomatik olarak GitHub Pages’e yayınlar.

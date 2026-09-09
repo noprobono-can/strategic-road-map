@@ -2,8 +2,9 @@
 
 import { AlertCircle, Sparkles } from "lucide-react";
 import { Company } from "@/lib/companies";
-import { CanvasFields } from "@/lib/canvas-types";
+import { CanvasFields, CompanyNote } from "@/lib/canvas-types";
 import { CanvasZoneCard, RoadmapZoneCard } from "@/components/canvas-zone-card";
+import { CompanyNotesPanel } from "@/components/company-notes-panel";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,11 +12,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface StrategyCanvasProps {
   company: Company;
   fields: CanvasFields;
+  notes: CompanyNote[];
   status: "loading" | "ready" | "error";
-  onFieldChange: (
-    key: keyof CanvasFields,
-    value: string,
-  ) => void;
+  onFieldChange: (key: keyof CanvasFields, value: string) => void;
+  onAddNote: (text: string) => boolean;
+  onRemoveNote: (noteId: string) => void;
 }
 
 function CanvasSkeleton() {
@@ -40,8 +41,9 @@ function CanvasErrorState() {
           <CardTitle className="text-base">Veriler yüklenemedi</CardTitle>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             Tarayıcı depolamasına erişilemiyor. Gizli mod, depolama
-            kısıtlaması veya tarayıcı ayarları nedeniyle tuval kaydedilemeyebilir.
-            Sayfayı yenileyin veya normal bir tarayıcı penceresinde tekrar deneyin.
+            kısıtlaması veya tarayıcı ayarları nedeniyle workspace
+            kaydedilemeyebilir. Sayfayı yenileyin veya normal bir tarayıcı
+            penceresinde tekrar deneyin.
           </p>
         </div>
       </CardHeader>
@@ -52,14 +54,17 @@ function CanvasErrorState() {
 export function StrategyCanvas({
   company,
   fields,
+  notes,
   status,
   onFieldChange,
+  onAddNote,
+  onRemoveNote,
 }: StrategyCanvasProps) {
   if (status === "loading") {
     return (
       <div className="space-y-4">
         <div className="rounded-xl border bg-muted/30 px-4 py-3">
-          <p className="text-sm text-muted-foreground">Tuval yükleniyor…</p>
+          <p className="text-sm text-muted-foreground">Workspace yükleniyor…</p>
         </div>
         <CanvasSkeleton />
       </div>
@@ -192,6 +197,15 @@ export function StrategyCanvas({
           disabled={disabled}
           fieldKey="successMetrics"
         />
+
+        <div className="xl:col-span-12">
+          <CompanyNotesPanel
+            notes={notes}
+            disabled={disabled}
+            onAddNote={onAddNote}
+            onRemoveNote={onRemoveNote}
+          />
+        </div>
       </div>
     </div>
   );

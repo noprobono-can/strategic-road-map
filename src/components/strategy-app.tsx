@@ -19,7 +19,8 @@ import {
 export function StrategyApp() {
   const [selectedCompanyId, setSelectedCompanyId] = useState(DEFAULT_COMPANY_ID);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const { status, fields, updateField } = useCanvasStorage(selectedCompanyId);
+  const { status, fields, notes, updateField, addNote, removeNote } =
+    useCanvasStorage(selectedCompanyId);
 
   const selectedCompany = useMemo(
     () =>
@@ -34,11 +35,11 @@ export function StrategyApp() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <header className="flex items-center justify-between border-b px-4 py-3 lg:hidden">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden bg-background">
+      <header className="flex shrink-0 items-center justify-between border-b px-4 py-3 lg:hidden">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Grup Strateji Tuvali
+            Grup Strateji Workspace
           </p>
           <h1 className="text-sm font-semibold">{selectedCompany.name}</h1>
         </div>
@@ -58,7 +59,7 @@ export function StrategyApp() {
             <SheetHeader className="sr-only">
               <SheetTitle>Grup şirketleri</SheetTitle>
               <SheetDescription>
-                Strateji tuvali için bir grup şirketi seçin.
+                Strateji workspace için bir grup şirketi seçin.
               </SheetDescription>
             </SheetHeader>
             <CompanySidebar
@@ -71,8 +72,8 @@ export function StrategyApp() {
         </Sheet>
       </header>
 
-      <div className="flex min-h-0 flex-1">
-        <div className="hidden w-[320px] shrink-0 lg:block">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <div className="hidden h-full min-h-0 w-[320px] shrink-0 lg:block">
           <CompanySidebar
             companies={COMPANIES}
             selectedId={selectedCompanyId}
@@ -80,11 +81,11 @@ export function StrategyApp() {
           />
         </div>
 
-        <main className="min-w-0 flex-1 overflow-auto">
+        <main className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain">
           <div className="mx-auto max-w-7xl px-4 py-5 lg:px-6 lg:py-6">
             <div className="mb-5 hidden lg:block">
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Strateji tuvali
+                Strateji workspace
               </p>
               <h1 className="text-xl font-semibold tracking-tight">
                 {selectedCompany.name}
@@ -98,8 +99,11 @@ export function StrategyApp() {
             <StrategyCanvas
               company={selectedCompany}
               fields={fields}
+              notes={notes}
               status={status}
               onFieldChange={updateField}
+              onAddNote={addNote}
+              onRemoveNote={removeNote}
             />
           </div>
         </main>

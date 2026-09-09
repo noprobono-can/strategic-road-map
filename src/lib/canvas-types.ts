@@ -11,6 +11,16 @@ export interface CanvasFields {
   successMetrics: string;
 }
 
+export interface CompanyNote {
+  id: string;
+  text: string;
+}
+
+export interface CompanyCanvasData {
+  fields: CanvasFields;
+  notes: CompanyNote[];
+}
+
 export type CanvasFieldKey = keyof CanvasFields;
 
 export interface CanvasZoneDefinition {
@@ -32,6 +42,11 @@ export const EMPTY_CANVAS: CanvasFields = {
   groupSynergies: "",
   risksConstraints: "",
   successMetrics: "",
+};
+
+export const EMPTY_COMPANY_DATA: CompanyCanvasData = {
+  fields: EMPTY_CANVAS,
+  notes: [],
 };
 
 export const CANVAS_ZONES: CanvasZoneDefinition[] = [
@@ -87,6 +102,52 @@ export const CANVAS_ZONES: CanvasZoneDefinition[] = [
   },
 ];
 
-export type CanvasStore = Record<string, CanvasFields>;
+export type CanvasStore = Record<string, CompanyCanvasData>;
 
 export const STORAGE_KEY = "group-strategic-roadmap-canvas-v1";
+
+function isCanvasFields(value: unknown): value is CanvasFields {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "ambition" in value &&
+    !("fields" in value)
+  );
+}
+
+export function normalizeCompanyData(value: unknown): CompanyCanvasData {
+  if (
+    typeof value === "object" &&
+    value !== null &&
+    "fields" in value &&
+    typeof (value as CompanyCanvasData).fields === "object"
+  ) {
+    const data = value as CompanyCanvasData;
+    return {
+      fields: { ...EMPTY_CANVAS, ...data.fields },
+      notes: Array.isArray(data.notes) ? data.notes : [],
+    };
+  }
+
+  if (isCanvasFields(value)) {
+    return {
+      fields: { ...EMPTY_CANVAS, ...value },
+      notes: [],
+    };
+  }
+
+  return EMPTY_COMPANY_DATA;
+}
+
+export function normalizeStore(raw: unknown): CanvasStore {
+  if (typeof raw !== "object" || raw === null) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(raw).map(([companyId, value]) => [
+      companyId,
+      normalizeCompanyData(value),
+    ]),
+  );
+}

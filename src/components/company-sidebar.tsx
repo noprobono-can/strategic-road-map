@@ -35,12 +35,12 @@ export function CompanySidebar({
               Grup
             </p>
             <h2 className="text-sm font-semibold leading-tight">
-              Strateji Tuvali
+              Strateji Workspace
             </h2>
           </div>
         </div>
         <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-          Şirket seçin; sağdaki tuvalde stratejik alanları birlikte
+          Şirket seçin; sağdaki workspace'te stratejik alanları birlikte
           dolduracağız.
         </p>
       </div>

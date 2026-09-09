@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Grup Strateji Tuvali",
+  title: "Grup Strateji Workspace",
   description:
-    "Grup şirketleri için interaktif strateji tuvali — canlı oturumlarda birlikte doldurulacak stratejik alanlar.",
+    "Grup şirketleri için interaktif strateji workspace — canlı oturumlarda birlikte doldurulacak stratejik alanlar.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
