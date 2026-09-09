@@ -2,21 +2,20 @@
 
 import { AlertCircle, Sparkles } from "lucide-react";
 import { Company } from "@/lib/companies";
-import { CanvasFields, CompanyNote } from "@/lib/canvas-types";
+import { CanvasFieldKey, ZoneNotes } from "@/lib/canvas-types";
+import { WorkspaceUserId } from "@/lib/gate-config";
 import { CanvasZoneCard, RoadmapZoneCard } from "@/components/canvas-zone-card";
-import { CompanyNotesPanel } from "@/components/company-notes-panel";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface StrategyCanvasProps {
   company: Company;
-  fields: CanvasFields;
-  notes: CompanyNote[];
+  zones: ZoneNotes;
+  currentUserId: WorkspaceUserId;
   status: "loading" | "ready" | "error";
-  onFieldChange: (key: keyof CanvasFields, value: string) => void;
-  onAddNote: (text: string) => boolean;
-  onRemoveNote: (noteId: string) => void;
+  onAddZoneNote: (zoneKey: CanvasFieldKey, text: string) => boolean;
+  onRemoveZoneNote: (zoneKey: CanvasFieldKey, noteId: string) => void;
 }
 
 function CanvasSkeleton() {
@@ -53,12 +52,11 @@ function CanvasErrorState() {
 
 export function StrategyCanvas({
   company,
-  fields,
-  notes,
+  zones,
+  currentUserId,
   status,
-  onFieldChange,
-  onAddNote,
-  onRemoveNote,
+  onAddZoneNote,
+  onRemoveZoneNote,
 }: StrategyCanvasProps) {
   if (status === "loading") {
     return (
@@ -115,10 +113,11 @@ export function StrategyCanvas({
           labelTr="Niyet / Kuzey Yıldızı"
           labelEn="Ambition"
           helperTr="Uzun vadeli yön ve stratejik niyet."
-          value={fields.ambition}
-          onChange={(value) => onFieldChange("ambition", value)}
+          notes={zones.ambition}
+          currentUserId={currentUserId}
           disabled={disabled}
-          fieldKey="ambition"
+          onAddNote={(text) => onAddZoneNote("ambition", text)}
+          onRemoveNote={(noteId) => onRemoveZoneNote("ambition", noteId)}
         />
 
         <CanvasZoneCard
@@ -126,10 +125,11 @@ export function StrategyCanvas({
           labelTr="Pazarlar ve Müşteriler"
           labelEn="Markets & customers"
           helperTr="Hedef segmentler, müşteri profilleri ve coğrafyalar."
-          value={fields.marketsCustomers}
-          onChange={(value) => onFieldChange("marketsCustomers", value)}
+          notes={zones.marketsCustomers}
+          currentUserId={currentUserId}
           disabled={disabled}
-          fieldKey="marketsCustomers"
+          onAddNote={(text) => onAddZoneNote("marketsCustomers", text)}
+          onRemoveNote={(noteId) => onRemoveZoneNote("marketsCustomers", noteId)}
         />
 
         <CanvasZoneCard
@@ -137,10 +137,11 @@ export function StrategyCanvas({
           labelTr="Teklifler"
           labelEn="Offerings"
           helperTr="Ürünler, hizmetler ve değer önerileri."
-          value={fields.offerings}
-          onChange={(value) => onFieldChange("offerings", value)}
+          notes={zones.offerings}
+          currentUserId={currentUserId}
           disabled={disabled}
-          fieldKey="offerings"
+          onAddNote={(text) => onAddZoneNote("offerings", text)}
+          onRemoveNote={(noteId) => onRemoveZoneNote("offerings", noteId)}
         />
 
         <CanvasZoneCard
@@ -148,21 +149,42 @@ export function StrategyCanvas({
           labelTr="Nasıl Kazanırız"
           labelEn="How we win"
           helperTr="Rekabet avantajları ve farklılaştırıcı yetenekler."
-          value={fields.howWeWin}
-          onChange={(value) => onFieldChange("howWeWin", value)}
+          notes={zones.howWeWin}
+          currentUserId={currentUserId}
           disabled={disabled}
-          fieldKey="howWeWin"
+          onAddNote={(text) => onAddZoneNote("howWeWin", text)}
+          onRemoveNote={(noteId) => onRemoveZoneNote("howWeWin", noteId)}
         />
 
         <RoadmapZoneCard
           className="xl:col-span-12"
-          values={{
-            now: fields.roadmapNow,
-            next: fields.roadmapNext,
-            later: fields.roadmapLater,
-          }}
-          onChange={onFieldChange}
+          currentUserId={currentUserId}
           disabled={disabled}
+          columns={[
+            {
+              key: "roadmapNow",
+              labelTr: "Şimdi",
+              labelEn: "Now",
+              helperTr: "Mevcut odak ve acil adımlar.",
+              notes: zones.roadmapNow,
+            },
+            {
+              key: "roadmapNext",
+              labelTr: "Sonra",
+              labelEn: "Next",
+              helperTr: "Yakın dönem büyüme ve teslimat.",
+              notes: zones.roadmapNext,
+            },
+            {
+              key: "roadmapLater",
+              labelTr: "İleride",
+              labelEn: "Later",
+              helperTr: "Uzun vadeli dönüşüm ve genişleme.",
+              notes: zones.roadmapLater,
+            },
+          ]}
+          onAddNote={onAddZoneNote}
+          onRemoveNote={onRemoveZoneNote}
         />
 
         <CanvasZoneCard
@@ -170,10 +192,11 @@ export function StrategyCanvas({
           labelTr="Grup Sinerjileri"
           labelEn="Group synergies"
           helperTr="Diğer grup varlıklarıyla bağlantılar ve ortak fırsatlar."
-          value={fields.groupSynergies}
-          onChange={(value) => onFieldChange("groupSynergies", value)}
+          notes={zones.groupSynergies}
+          currentUserId={currentUserId}
           disabled={disabled}
-          fieldKey="groupSynergies"
+          onAddNote={(text) => onAddZoneNote("groupSynergies", text)}
+          onRemoveNote={(noteId) => onRemoveZoneNote("groupSynergies", noteId)}
         />
 
         <CanvasZoneCard
@@ -181,10 +204,11 @@ export function StrategyCanvas({
           labelTr="Riskler ve Kısıtlar"
           labelEn="Risks & constraints"
           helperTr="Dış tehditler, iç kısıtlar ve azaltma yaklaşımları."
-          value={fields.risksConstraints}
-          onChange={(value) => onFieldChange("risksConstraints", value)}
+          notes={zones.risksConstraints}
+          currentUserId={currentUserId}
           disabled={disabled}
-          fieldKey="risksConstraints"
+          onAddNote={(text) => onAddZoneNote("risksConstraints", text)}
+          onRemoveNote={(noteId) => onRemoveZoneNote("risksConstraints", noteId)}
         />
 
         <CanvasZoneCard
@@ -192,20 +216,12 @@ export function StrategyCanvas({
           labelTr="Başarı Metrikleri"
           labelEn="Success metrics"
           helperTr="Ölçülebilir sonuçlar ve izleme göstergeleri."
-          value={fields.successMetrics}
-          onChange={(value) => onFieldChange("successMetrics", value)}
+          notes={zones.successMetrics}
+          currentUserId={currentUserId}
           disabled={disabled}
-          fieldKey="successMetrics"
+          onAddNote={(text) => onAddZoneNote("successMetrics", text)}
+          onRemoveNote={(noteId) => onRemoveZoneNote("successMetrics", noteId)}
         />
-
-        <div className="xl:col-span-12">
-          <CompanyNotesPanel
-            notes={notes}
-            disabled={disabled}
-            onAddNote={onAddNote}
-            onRemoveNote={onRemoveNote}
-          />
-        </div>
       </div>
     </div>
   );

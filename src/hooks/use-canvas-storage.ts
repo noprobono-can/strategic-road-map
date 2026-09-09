@@ -1,54 +1,55 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { WorkspaceUserId } from "@/lib/gate-config";
 import {
   CanvasFieldKey,
-  CanvasStore,
-  CompanyCanvasData,
-  CompanyNote,
+  CompanyWorkspaceData,
   EMPTY_COMPANY_DATA,
-  STORAGE_KEY,
+  LEGACY_STORAGE_KEY,
   normalizeStore,
+  STORAGE_KEY,
+  WorkspaceStore,
+  createNote,
 } from "@/lib/canvas-types";
 
 type StorageStatus = "loading" | "ready" | "error";
 
-function readStore(): CanvasStore {
+function readStore(): WorkspaceStore {
   if (typeof window === "undefined") {
     return {};
   }
 
-  const raw = window.localStorage.getItem(STORAGE_KEY);
+  const raw =
+    window.localStorage.getItem(STORAGE_KEY) ??
+    window.localStorage.getItem(LEGACY_STORAGE_KEY);
+
   if (!raw) {
     return {};
   }
 
   const parsed = JSON.parse(raw) as unknown;
-  return normalizeStore(parsed);
+  const normalized = normalizeStore(parsed);
+
+  if (window.localStorage.getItem(STORAGE_KEY) !== JSON.stringify(normalized)) {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+  }
+
+  return normalized;
 }
 
-function writeStore(store: CanvasStore) {
+function writeStore(store: WorkspaceStore) {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
 }
 
-function createNoteId(): string {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
-  }
-
-  return `note-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
-export function useCanvasStorage(companyId: string) {
+export function useCanvasStorage(companyId: string, currentUserId: WorkspaceUserId | null) {
   const [status, setStatus] = useState<Exclude<StorageStatus, "loading">>("ready");
-  const [store, setStore] = useState<CanvasStore>({});
-  const [data, setData] = useState<CompanyCanvasData>(EMPTY_COMPANY_DATA);
+  const [data, setData] = useState<CompanyWorkspaceData>(EMPTY_COMPANY_DATA);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     try {
       const loaded = readStore();
-      setStore(loaded);
       setData(loaded[companyId] ?? EMPTY_COMPANY_DATA);
       setIsHydrated(true);
     } catch {
@@ -58,51 +59,32 @@ export function useCanvasStorage(companyId: string) {
   }, [companyId]);
 
   const persistCompanyData = useCallback(
-    (next: CompanyCanvasData) => {
+    (next: CompanyWorkspaceData) => {
       setData(next);
-      setStore((previous) => {
-        const updated = { ...previous, [companyId]: next };
-        try {
-          writeStore(updated);
-        } catch {
-          setStatus("error");
-        }
-        return updated;
-      });
+
+      try {
+        const loaded = readStore();
+        writeStore({ ...loaded, [companyId]: next });
+      } catch {
+        setStatus("error");
+      }
     },
     [companyId],
   );
 
-  const updateField = useCallback(
-    (key: CanvasFieldKey, value: string) => {
-      setData((current) => {
-        const next: CompanyCanvasData = {
-          ...current,
-          fields: { ...current.fields, [key]: value },
-        };
-        persistCompanyData(next);
-        return next;
-      });
-    },
-    [persistCompanyData],
-  );
-
-  const addNote = useCallback(
-    (text: string) => {
+  const addZoneNote = useCallback(
+    (zoneKey: CanvasFieldKey, text: string) => {
       const trimmed = text.trim();
-      if (!trimmed) {
+      if (!trimmed || !currentUserId) {
         return false;
       }
 
-      const note: CompanyNote = {
-        id: createNoteId(),
-        text: trimmed,
-      };
-
       setData((current) => {
-        const next: CompanyCanvasData = {
-          ...current,
-          notes: [...current.notes, note],
+        const next: CompanyWorkspaceData = {
+          zones: {
+            ...current.zones,
+            [zoneKey]: [...current.zones[zoneKey], createNote(trimmed, currentUserId)],
+          },
         };
         persistCompanyData(next);
         return next;
@@ -110,31 +92,40 @@ export function useCanvasStorage(companyId: string) {
 
       return true;
     },
-    [persistCompanyData],
+    [currentUserId, persistCompanyData],
   );
 
-  const removeNote = useCallback(
-    (noteId: string) => {
+  const removeZoneNote = useCallback(
+    (zoneKey: CanvasFieldKey, noteId: string) => {
+      if (!currentUserId) {
+        return;
+      }
+
       setData((current) => {
-        const next: CompanyCanvasData = {
-          ...current,
-          notes: current.notes.filter((note) => note.id !== noteId),
+        const note = current.zones[zoneKey].find((entry) => entry.id === noteId);
+        if (!note || note.authorId !== currentUserId) {
+          return current;
+        }
+
+        const next: CompanyWorkspaceData = {
+          zones: {
+            ...current.zones,
+            [zoneKey]: current.zones[zoneKey].filter((entry) => entry.id !== noteId),
+          },
         };
         persistCompanyData(next);
         return next;
       });
     },
-    [persistCompanyData],
+    [currentUserId, persistCompanyData],
   );
 
   const uiStatus: StorageStatus = !isHydrated ? "loading" : status;
 
   return {
     status: uiStatus,
-    fields: data.fields,
-    notes: data.notes,
-    updateField,
-    addNote,
-    removeNote,
+    zones: data.zones,
+    addZoneNote,
+    removeZoneNote,
   };
 }

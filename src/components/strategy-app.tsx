@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Menu } from "lucide-react";
+import { getUserLabel, WorkspaceUserId } from "@/lib/gate-config";
 import { COMPANIES, DEFAULT_COMPANY_ID } from "@/lib/companies";
 import { useCanvasStorage } from "@/hooks/use-canvas-storage";
 import { CompanySidebar } from "@/components/company-sidebar";
@@ -16,11 +17,17 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-export function StrategyApp() {
+interface StrategyAppProps {
+  currentUserId: WorkspaceUserId;
+}
+
+export function StrategyApp({ currentUserId }: StrategyAppProps) {
   const [selectedCompanyId, setSelectedCompanyId] = useState(DEFAULT_COMPANY_ID);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const { status, fields, notes, updateField, addNote, removeNote } =
-    useCanvasStorage(selectedCompanyId);
+  const { status, zones, addZoneNote, removeZoneNote } = useCanvasStorage(
+    selectedCompanyId,
+    currentUserId,
+  );
 
   const selectedCompany = useMemo(
     () =>
@@ -42,6 +49,9 @@ export function StrategyApp() {
             Grup Strateji Workspace
           </p>
           <h1 className="text-sm font-semibold">{selectedCompany.name}</h1>
+          <p className="text-xs text-muted-foreground">
+            Oturum: {getUserLabel(currentUserId)}
+          </p>
         </div>
         <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
           <SheetTrigger
@@ -91,19 +101,22 @@ export function StrategyApp() {
                 {selectedCompany.name}
               </h1>
               <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-                Alanları birlikte dolduracağız. Yazdıklarınız tarayıcıda
-                saklanır; sayfa yenilense bile kalır.
+                Alanları birlikte dolduracağız. Notlar kullanıcıya göre
+                etiketlenir; yalnızca kendi notlarınızı silebilirsiniz. Veriler
+                tarayıcıda saklanır.
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Oturum: {getUserLabel(currentUserId)}
               </p>
             </div>
 
             <StrategyCanvas
               company={selectedCompany}
-              fields={fields}
-              notes={notes}
+              zones={zones}
+              currentUserId={currentUserId}
               status={status}
-              onFieldChange={updateField}
-              onAddNote={addNote}
-              onRemoveNote={removeNote}
+              onAddZoneNote={addZoneNote}
+              onRemoveZoneNote={removeZoneNote}
             />
           </div>
         </main>

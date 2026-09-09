@@ -1,6 +1,8 @@
 "use client";
 
-import { CanvasFieldKey } from "@/lib/canvas-types";
+import { CanvasFieldKey, WorkspaceNote } from "@/lib/canvas-types";
+import { WorkspaceUserId } from "@/lib/gate-config";
+import { ZoneNotesList } from "@/components/zone-notes-list";
 import {
   Card,
   CardContent,
@@ -8,36 +10,35 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
 interface CanvasZoneCardProps {
   labelTr: string;
   labelEn?: string;
   helperTr: string;
-  value: string;
-  onChange: (value: string) => void;
+  notes: WorkspaceNote[];
+  currentUserId: WorkspaceUserId | null;
   disabled?: boolean;
   className?: string;
-  fieldKey?: CanvasFieldKey;
+  onAddNote: (text: string) => boolean;
+  onRemoveNote: (noteId: string) => void;
 }
 
 export function CanvasZoneCard({
   labelTr,
   labelEn,
   helperTr,
-  value,
-  onChange,
+  notes,
+  currentUserId,
   disabled,
   className,
-  fieldKey,
+  onAddNote,
+  onRemoveNote,
 }: CanvasZoneCardProps) {
-  const isEmpty = value.trim().length === 0;
-
   return (
     <Card
       className={cn(
-        "flex h-full min-h-[180px] flex-col border-dashed bg-card/80 shadow-none",
+        "flex h-full min-h-[220px] flex-col border-dashed bg-card/80 shadow-none",
         className,
       )}
     >
@@ -53,18 +54,12 @@ export function CanvasZoneCard({
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col pt-0">
-        <Textarea
-          id={fieldKey}
-          name={fieldKey}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
+        <ZoneNotesList
+          notes={notes}
+          currentUserId={currentUserId}
           disabled={disabled}
-          placeholder={
-            isEmpty
-              ? "Henüz not eklenmedi. Canlı oturumda doldurulacak."
-              : undefined
-          }
-          className="min-h-[96px] flex-1 resize-none text-sm leading-relaxed"
+          onAddNote={onAddNote}
+          onRemoveNote={onRemoveNote}
         />
       </CardContent>
     </Card>
@@ -72,47 +67,32 @@ export function CanvasZoneCard({
 }
 
 interface RoadmapZoneCardProps {
-  values: {
-    now: string;
-    next: string;
-    later: string;
-  };
-  onChange: (key: "roadmapNow" | "roadmapNext" | "roadmapLater", value: string) => void;
+  columns: Array<{
+    key: CanvasFieldKey;
+    labelTr: string;
+    labelEn: string;
+    helperTr: string;
+    notes: WorkspaceNote[];
+  }>;
+  currentUserId: WorkspaceUserId | null;
   disabled?: boolean;
   className?: string;
+  onAddNote: (key: CanvasFieldKey, text: string) => boolean;
+  onRemoveNote: (key: CanvasFieldKey, noteId: string) => void;
 }
 
-const ROADMAP_COLUMNS = [
-  {
-    key: "roadmapNow" as const,
-    labelTr: "Şimdi",
-    labelEn: "Now",
-    helperTr: "Mevcut odak ve acil adımlar.",
-  },
-  {
-    key: "roadmapNext" as const,
-    labelTr: "Sonra",
-    labelEn: "Next",
-    helperTr: "Yakın dönem büyüme ve teslimat.",
-  },
-  {
-    key: "roadmapLater" as const,
-    labelTr: "İleride",
-    labelEn: "Later",
-    helperTr: "Uzun vadeli dönüşüm ve genişleme.",
-  },
-];
-
 export function RoadmapZoneCard({
-  values,
-  onChange,
+  columns,
+  currentUserId,
   disabled,
   className,
+  onAddNote,
+  onRemoveNote,
 }: RoadmapZoneCardProps) {
   return (
     <Card
       className={cn(
-        "flex h-full min-h-[220px] flex-col border-dashed bg-card/80 shadow-none",
+        "flex h-full min-h-[260px] flex-col border-dashed bg-card/80 shadow-none",
         className,
       )}
     >
@@ -125,36 +105,28 @@ export function RoadmapZoneCard({
           Şimdi, sonra ve ileride odaklanılacak adımlar.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid flex-1 gap-3 pt-0 md:grid-cols-3">
-        {ROADMAP_COLUMNS.map((column) => {
-          const value = values[
-            column.key === "roadmapNow"
-              ? "now"
-              : column.key === "roadmapNext"
-                ? "next"
-                : "later"
-          ];
-
-          return (
-            <div key={column.key} className="flex min-h-[120px] flex-col gap-2">
-              <div>
-                <p className="text-xs font-semibold">{column.labelTr}</p>
-                <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                  {column.labelEn}
-                </p>
-              </div>
-              <Textarea
-                id={column.key}
-                name={column.key}
-                value={value}
-                onChange={(event) => onChange(column.key, event.target.value)}
-                disabled={disabled}
-                placeholder="Henüz not eklenmedi. Canlı oturumda doldurulacak."
-                className="min-h-[88px] flex-1 resize-none text-sm leading-relaxed"
-              />
+      <CardContent className="grid flex-1 gap-4 pt-0 md:grid-cols-3">
+        {columns.map((column) => (
+          <div key={column.key} className="flex min-h-[180px] flex-col gap-2">
+            <div>
+              <p className="text-xs font-semibold">{column.labelTr}</p>
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                {column.labelEn}
+              </p>
+              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                {column.helperTr}
+              </p>
             </div>
-          );
-        })}
+            <ZoneNotesList
+              notes={column.notes}
+              currentUserId={currentUserId}
+              disabled={disabled}
+              compact
+              onAddNote={(text) => onAddNote(column.key, text)}
+              onRemoveNote={(noteId) => onRemoveNote(column.key, noteId)}
+            />
+          </div>
+        ))}
       </CardContent>
     </Card>
   );

@@ -1,10 +1,5 @@
-import { SessionGate } from "@/components/session-gate";
-import { StrategyApp } from "@/components/strategy-app";
+import { AuthWorkspace } from "@/components/auth-workspace";
 
 export default function Home() {
-  return (
-    <SessionGate>
-      <StrategyApp />
-    </SessionGate>
-  );
+  return <AuthWorkspace />;
 }

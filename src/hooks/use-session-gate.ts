@@ -2,49 +2,62 @@
 
 import { useCallback, useEffect, useState } from "react";
 import {
-  GATE_SESSION_KEY,
-  GATE_SESSION_TOKEN,
+  clearGateSession,
+  GateSession,
+  readGateSession,
+  validateCredentials,
+  WorkspaceUserId,
+  writeGateSession,
 } from "@/lib/gate-config";
 
 type GateStatus = "loading" | "locked" | "unlocked";
 
-function readSessionUnlock(): boolean {
-  if (typeof window === "undefined") {
-    return false;
-  }
-
-  try {
-    return sessionStorage.getItem(GATE_SESSION_KEY) === GATE_SESSION_TOKEN;
-  } catch {
-    return false;
-  }
-}
-
 export function useSessionGate() {
   const [status, setStatus] = useState<GateStatus>("loading");
+  const [session, setSession] = useState<GateSession | null>(null);
 
   useEffect(() => {
-    setStatus(readSessionUnlock() ? "unlocked" : "locked");
+    const existing = readGateSession();
+    setSession(existing);
+    setStatus(existing ? "unlocked" : "locked");
   }, []);
 
-  const unlock = useCallback(() => {
+  const unlock = useCallback((username: string, password: string) => {
+    const userId = validateCredentials(username, password);
+    if (!userId) {
+      return false;
+    }
+
     try {
-      sessionStorage.setItem(GATE_SESSION_KEY, GATE_SESSION_TOKEN);
+      writeGateSession(userId);
+      const nextSession = readGateSession();
+      setSession(nextSession);
       setStatus("unlocked");
+      return true;
     } catch {
       setStatus("locked");
+      return false;
     }
   }, []);
 
   const lock = useCallback(() => {
     try {
-      sessionStorage.removeItem(GATE_SESSION_KEY);
+      clearGateSession();
     } catch {
       // Ignore storage errors and still show the gate.
     }
 
+    setSession(null);
     setStatus("locked");
   }, []);
 
-  return { status, unlock, lock };
+  return {
+    status,
+    session,
+    currentUserId: session?.userId ?? null,
+    unlock,
+    lock,
+  };
 }
+
+export type { WorkspaceUserId };

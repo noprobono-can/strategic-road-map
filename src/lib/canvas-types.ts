@@ -1,27 +1,28 @@
-export interface CanvasFields {
-  ambition: string;
-  marketsCustomers: string;
-  offerings: string;
-  howWeWin: string;
-  roadmapNow: string;
-  roadmapNext: string;
-  roadmapLater: string;
-  groupSynergies: string;
-  risksConstraints: string;
-  successMetrics: string;
-}
+import { WorkspaceUserId } from "@/lib/gate-config";
 
-export interface CompanyNote {
+export interface WorkspaceNote {
   id: string;
   text: string;
+  authorId: WorkspaceUserId;
 }
 
-export interface CompanyCanvasData {
-  fields: CanvasFields;
-  notes: CompanyNote[];
-}
+export type CanvasFieldKey =
+  | "ambition"
+  | "marketsCustomers"
+  | "offerings"
+  | "howWeWin"
+  | "roadmapNow"
+  | "roadmapNext"
+  | "roadmapLater"
+  | "groupSynergies"
+  | "risksConstraints"
+  | "successMetrics";
 
-export type CanvasFieldKey = keyof CanvasFields;
+export type ZoneNotes = Record<CanvasFieldKey, WorkspaceNote[]>;
+
+export interface CompanyWorkspaceData {
+  zones: ZoneNotes;
+}
 
 export interface CanvasZoneDefinition {
   key: CanvasFieldKey | "roadmap";
@@ -31,22 +32,36 @@ export interface CanvasZoneDefinition {
   span?: "wide" | "tall" | "default";
 }
 
-export const EMPTY_CANVAS: CanvasFields = {
-  ambition: "",
-  marketsCustomers: "",
-  offerings: "",
-  howWeWin: "",
-  roadmapNow: "",
-  roadmapNext: "",
-  roadmapLater: "",
-  groupSynergies: "",
-  risksConstraints: "",
-  successMetrics: "",
-};
+export const CANVAS_FIELD_KEYS: CanvasFieldKey[] = [
+  "ambition",
+  "marketsCustomers",
+  "offerings",
+  "howWeWin",
+  "roadmapNow",
+  "roadmapNext",
+  "roadmapLater",
+  "groupSynergies",
+  "risksConstraints",
+  "successMetrics",
+];
 
-export const EMPTY_COMPANY_DATA: CompanyCanvasData = {
-  fields: EMPTY_CANVAS,
-  notes: [],
+export function createEmptyZoneNotes(): ZoneNotes {
+  return {
+    ambition: [],
+    marketsCustomers: [],
+    offerings: [],
+    howWeWin: [],
+    roadmapNow: [],
+    roadmapNext: [],
+    roadmapLater: [],
+    groupSynergies: [],
+    risksConstraints: [],
+    successMetrics: [],
+  };
+}
+
+export const EMPTY_COMPANY_DATA: CompanyWorkspaceData = {
+  zones: createEmptyZoneNotes(),
 };
 
 export const CANVAS_ZONES: CanvasZoneDefinition[] = [
@@ -102,44 +117,119 @@ export const CANVAS_ZONES: CanvasZoneDefinition[] = [
   },
 ];
 
-export type CanvasStore = Record<string, CompanyCanvasData>;
+export type WorkspaceStore = Record<string, CompanyWorkspaceData>;
 
-export const STORAGE_KEY = "group-strategic-roadmap-canvas-v1";
+export const STORAGE_KEY = "group-strategic-roadmap-canvas-v2";
+export const LEGACY_STORAGE_KEY = "group-strategic-roadmap-canvas-v1";
 
-function isCanvasFields(value: unknown): value is CanvasFields {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "ambition" in value &&
-    !("fields" in value)
-  );
+interface LegacyCanvasFields {
+  ambition: string;
+  marketsCustomers: string;
+  offerings: string;
+  howWeWin: string;
+  roadmapNow: string;
+  roadmapNext: string;
+  roadmapLater: string;
+  groupSynergies: string;
+  risksConstraints: string;
+  successMetrics: string;
 }
 
-export function normalizeCompanyData(value: unknown): CompanyCanvasData {
-  if (
-    typeof value === "object" &&
-    value !== null &&
-    "fields" in value &&
-    typeof (value as CompanyCanvasData).fields === "object"
-  ) {
-    const data = value as CompanyCanvasData;
-    return {
-      fields: { ...EMPTY_CANVAS, ...data.fields },
-      notes: Array.isArray(data.notes) ? data.notes : [],
-    };
+interface LegacyCompanyNote {
+  id: string;
+  text: string;
+  authorId?: WorkspaceUserId;
+}
+
+function createNoteId(): string {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
   }
 
-  if (isCanvasFields(value)) {
-    return {
-      fields: { ...EMPTY_CANVAS, ...value },
-      notes: [],
+  return `note-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function createMigratedNote(text: string, authorId: WorkspaceUserId = "okan"): WorkspaceNote {
+  return {
+    id: createNoteId(),
+    text,
+    authorId,
+  };
+}
+
+function migrateLegacyFields(fields: LegacyCanvasFields): ZoneNotes {
+  const zones = createEmptyZoneNotes();
+
+  (Object.keys(fields) as CanvasFieldKey[]).forEach((key) => {
+    const value = fields[key]?.trim();
+    if (value) {
+      zones[key] = [createMigratedNote(value)];
+    }
+  });
+
+  return zones;
+}
+
+function migrateLegacyCompanyValue(value: unknown): CompanyWorkspaceData {
+  if (typeof value !== "object" || value === null) {
+    return EMPTY_COMPANY_DATA;
+  }
+
+  if ("zones" in value && typeof (value as CompanyWorkspaceData).zones === "object") {
+    const data = value as CompanyWorkspaceData;
+    const zones = createEmptyZoneNotes();
+
+    CANVAS_FIELD_KEYS.forEach((key) => {
+      const notes = data.zones?.[key];
+      zones[key] = Array.isArray(notes)
+        ? notes
+            .filter((note) => typeof note?.text === "string" && note.text.trim())
+            .map((note) => ({
+              id: note.id || createNoteId(),
+              text: note.text.trim(),
+              authorId:
+                note.authorId === "emre" || note.authorId === "bora"
+                  ? note.authorId
+                  : "okan",
+            }))
+        : [];
+    });
+
+    return { zones };
+  }
+
+  if ("fields" in value && typeof (value as { fields: LegacyCanvasFields }).fields === "object") {
+    const legacy = value as {
+      fields: LegacyCanvasFields;
+      notes?: LegacyCompanyNote[];
     };
+    const zones = migrateLegacyFields(legacy.fields);
+
+    legacy.notes?.forEach((note) => {
+      const text = note.text?.trim();
+      if (text) {
+        zones.ambition.push(
+          createMigratedNote(
+            text,
+            note.authorId === "emre" || note.authorId === "bora"
+              ? note.authorId
+              : "okan",
+          ),
+        );
+      }
+    });
+
+    return { zones };
+  }
+
+  if ("ambition" in value) {
+    return { zones: migrateLegacyFields(value as LegacyCanvasFields) };
   }
 
   return EMPTY_COMPANY_DATA;
 }
 
-export function normalizeStore(raw: unknown): CanvasStore {
+export function normalizeStore(raw: unknown): WorkspaceStore {
   if (typeof raw !== "object" || raw === null) {
     return {};
   }
@@ -147,7 +237,15 @@ export function normalizeStore(raw: unknown): CanvasStore {
   return Object.fromEntries(
     Object.entries(raw).map(([companyId, value]) => [
       companyId,
-      normalizeCompanyData(value),
+      migrateLegacyCompanyValue(value),
     ]),
   );
+}
+
+export function createNote(text: string, authorId: WorkspaceUserId): WorkspaceNote {
+  return {
+    id: createNoteId(),
+    text: text.trim(),
+    authorId,
+  };
 }

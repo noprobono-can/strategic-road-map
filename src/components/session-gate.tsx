@@ -2,7 +2,6 @@
 
 import { FormEvent, useState } from "react";
 import { LockKeyhole } from "lucide-react";
-import { isAccessCodeValid } from "@/lib/gate-config";
 import { useSessionGate } from "@/hooks/use-session-gate";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,24 +14,24 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface SessionGateProps {
-  children: React.ReactNode;
+  children: (currentUserId: NonNullable<ReturnType<typeof useSessionGate>["currentUserId"]>) => React.ReactNode;
 }
 
 export function SessionGate({ children }: SessionGateProps) {
-  const { status, unlock } = useSessionGate();
-  const [code, setCode] = useState("");
+  const { status, currentUserId, unlock } = useSessionGate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (isAccessCodeValid(code)) {
+    if (unlock(username, password)) {
       setError(null);
-      unlock();
       return;
     }
 
-    setError("Erişim kodu hatalı. Lütfen tekrar deneyin.");
+    setError("Kullanıcı adı veya şifre hatalı. Lütfen tekrar deneyin.");
   };
 
   if (status === "loading") {
@@ -53,8 +52,8 @@ export function SessionGate({ children }: SessionGateProps) {
     );
   }
 
-  if (status === "unlocked") {
-    return <div className="h-dvh overflow-hidden">{children}</div>;
+  if (status === "unlocked" && currentUserId) {
+    return <div className="h-dvh overflow-hidden">{children(currentUserId)}</div>;
   }
 
   return (
@@ -71,32 +70,55 @@ export function SessionGate({ children }: SessionGateProps) {
             <CardTitle className="text-2xl">Giriş</CardTitle>
           </div>
           <CardDescription className="leading-relaxed">
-            Devam etmek için erişim kodunu girin. Başarılı giriş bu oturum
-            boyunca hatırlanır; sayfa yenilense bile açık kalır.
+            Devam etmek için kullanıcı adınızı ve erişim kodunu girin. Başarılı
+            giriş bu oturum boyunca hatırlanır; sayfa yenilense bile açık kalır.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <label
-                htmlFor="access-code"
+                htmlFor="username"
+                className="text-sm font-medium leading-none"
+              >
+                Kullanıcı adı
+              </label>
+              <input
+                id="username"
+                name="username"
+                autoComplete="username"
+                value={username}
+                onChange={(event) => {
+                  setUsername(event.target.value);
+                  if (error) {
+                    setError(null);
+                  }
+                }}
+                className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                placeholder="Kullanıcı adınız"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label
+                htmlFor="password"
                 className="text-sm font-medium leading-none"
               >
                 Erişim kodu
               </label>
               <input
-                id="access-code"
-                name="access-code"
+                id="password"
+                name="password"
                 type="password"
-                autoComplete="off"
-                value={code}
+                autoComplete="current-password"
+                value={password}
                 onChange={(event) => {
-                  setCode(event.target.value);
+                  setPassword(event.target.value);
                   if (error) {
                     setError(null);
                   }
                 }}
-                className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                 placeholder="Erişim kodunuzu yazın"
               />
             </div>
