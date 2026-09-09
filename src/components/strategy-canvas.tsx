@@ -77,30 +77,26 @@ export function StrategyCanvas({
 
   return (
     <div className="space-y-4">
-      <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-primary/5 via-background to-background">
-        <CardHeader className="gap-3 pb-4">
+      <Card className="panel-surface overflow-hidden border-primary/30 bg-card">
+        <CardHeader className="gap-4 pb-5">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="px-2.5 text-[11px] uppercase tracking-[0.12em]">
               Seçili varlık
             </Badge>
-            <Badge variant="secondary" className="gap-1 text-xs">
+            <Badge variant="secondary" className="gap-1 px-2.5 text-[11px] uppercase tracking-[0.12em]">
               <Sparkles className="size-3.5" />
               Canlı doldurma
             </Badge>
           </div>
           <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-              Varlık adı
-            </p>
-            <CardTitle className="text-3xl font-semibold tracking-tight">
+            <p className="gold-label">Varlık adı</p>
+            <CardTitle className="font-heading text-[1.75rem] font-semibold tracking-tight">
               {company.name}
             </CardTitle>
           </div>
           <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-              Birincil rol
-            </p>
-            <p className="mt-1.5 max-w-3xl text-base leading-relaxed text-foreground">
+            <p className="gold-label">Birincil rol</p>
+            <p className="mt-1.5 max-w-3xl text-[0.95rem] leading-relaxed text-foreground">
               {company.role}
             </p>
           </div>

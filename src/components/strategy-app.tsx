@@ -120,16 +120,14 @@ export function StrategyApp({
   ) : null;
 
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden bg-background">
-      <header className="flex shrink-0 items-start justify-between gap-3 border-b px-4 py-3 lg:px-6">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden">
+      <header className="app-header-surface relative flex shrink-0 items-start justify-between gap-3 px-5 py-4 lg:px-8 after:pointer-events-none after:absolute after:inset-x-8 after:bottom-0 after:h-px after:bg-gradient-to-r after:from-transparent after:via-primary after:to-transparent after:opacity-55">
         <div className="min-w-0">
-          <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-            Grup Strateji Workspace
-          </p>
-          <h1 className="truncate text-base font-semibold lg:text-lg">
+          <p className="gold-label">Grup Strateji Workspace</p>
+          <h1 className="font-heading truncate text-xl font-semibold lg:text-[1.375rem]">
             {selectedCompany.name}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground">
             Oturum: {getUserLabel(currentUserId)}
           </p>
         </div>
@@ -156,15 +154,13 @@ export function StrategyApp({
         ) : null}
 
         <main className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain">
-          <div className="mx-auto max-w-7xl px-4 py-5 lg:px-6 lg:py-6">
-            <div className="mb-5 hidden lg:block">
-              <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-                Strateji workspace
-              </p>
-              <h2 className="text-2xl font-semibold tracking-tight">
+          <div className="mx-auto max-w-7xl px-5 py-6 lg:px-8 lg:py-7">
+            <div className="mb-6 hidden lg:block">
+              <p className="gold-label">Strateji workspace</p>
+              <h2 className="font-heading text-[1.75rem] font-semibold tracking-tight">
                 {selectedCompany.name}
               </h2>
-              <p className="mt-2 max-w-2xl text-base leading-relaxed text-muted-foreground">
+              <p className="mt-2 max-w-2xl text-[0.95rem] leading-relaxed text-muted-foreground">
                 Notlar kullanıcıya göre etiketlenir; yalnızca kendi notlarınızı
                 silebilirsiniz. Veriler tarayıcıda saklanır.
               </p>

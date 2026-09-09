@@ -27,14 +27,14 @@ export function CompanySidebar({
         className,
       )}
     >
-      <div className="px-4 py-5">
-        <div className="flex items-center gap-2">
-          <Building2 className="size-5 text-sidebar-primary" />
+      <div className="px-5 py-5">
+        <div className="flex items-center gap-3">
+          <div className="flex size-10 items-center justify-center rounded-xl border border-border bg-accent text-accent-foreground">
+            <Building2 className="size-5" />
+          </div>
           <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-              Grup
-            </p>
-            <h2 className="text-base font-semibold leading-tight">
+            <p className="gold-label">Grup</p>
+            <h2 className="font-heading text-base font-semibold leading-tight">
               Strateji Workspace
             </h2>
           </div>
@@ -43,8 +43,8 @@ export function CompanySidebar({
 
       <Separator />
 
-      <ScrollArea className="flex-1 px-2 py-3">
-        <nav aria-label="Grup şirketleri" className="space-y-1">
+      <ScrollArea className="flex-1 px-3 py-4">
+        <nav aria-label="Grup şirketleri" className="space-y-2">
           {companies.map((company, index) => {
             const isSelected = company.id === selectedId;
 
@@ -54,19 +54,19 @@ export function CompanySidebar({
                 type="button"
                 onClick={() => onSelect(company.id)}
                 className={cn(
-                  "w-full rounded-lg border px-3.5 py-3.5 text-left transition-colors",
+                  "w-full rounded-xl border px-3.5 py-3.5 text-left transition-colors",
                   isSelected
-                    ? "border-sidebar-primary bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
-                    : "border-transparent hover:border-sidebar-border hover:bg-sidebar-accent/60",
+                    ? "border-primary bg-accent text-accent-foreground shadow-[inset_0_1px_0_var(--primary)]"
+                    : "border-border bg-secondary/70 hover:border-primary/70 hover:bg-accent/50",
                 )}
               >
                 <div className="flex items-start justify-between gap-2">
-                  <span className="text-base font-medium leading-snug">
+                  <span className="text-[0.95rem] font-semibold leading-snug">
                     {company.name}
                   </span>
                   <Badge
-                    variant={isSelected ? "default" : "secondary"}
-                    className="shrink-0 text-xs"
+                    variant={isSelected ? "default" : "outline"}
+                    className="shrink-0 px-2 text-[11px] uppercase tracking-[0.12em]"
                   >
                     {index + 1}
                   </Badge>

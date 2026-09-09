@@ -139,22 +139,22 @@ export function SessionGate({ children }: SessionGateProps) {
 
   if (status === "loading") {
     return (
-      <div className="relative min-h-screen bg-background">
-        <div className="absolute top-4 right-4 z-10">
+      <div className="relative min-h-screen">
+        <div className="absolute top-5 right-5 z-10">
           <ThemeToggle />
         </div>
-        <div className="flex min-h-screen items-center justify-center px-4">
-          <Card className="w-full max-w-md">
-          <CardHeader className="space-y-3">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-4 w-full" />
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-          </CardContent>
-        </Card>
+        <div className="flex min-h-screen items-center justify-center px-6 py-8">
+          <Card className="w-full max-w-md rounded-[18px]">
+            <CardHeader className="space-y-3">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-8 w-48" />
+              <Skeleton className="h-4 w-full" />
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Skeleton className="h-11 w-full rounded-[10px]" />
+              <Skeleton className="h-11 w-full rounded-[10px]" />
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
@@ -169,23 +169,23 @@ export function SessionGate({ children }: SessionGateProps) {
   }
 
   return (
-    <div className="relative min-h-screen bg-background">
-      <div className="absolute top-4 right-4 z-10">
+    <div className="relative min-h-screen">
+      <div className="absolute top-5 right-5 z-10">
         <ThemeToggle />
       </div>
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/5 via-background to-background px-4">
-      <Card className="w-full max-w-md border-primary/20 shadow-lg">
-        <CardHeader className="gap-3">
-          <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <LockKeyhole className="size-5" />
-          </div>
-          <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-              Grup Strateji Workspace
-            </p>
-            <CardTitle className="text-3xl">{title}</CardTitle>
-          </div>
-          <CardDescription className="text-base leading-relaxed">
+      <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(700px_320px_at_50%_0%,color-mix(in_srgb,var(--primary)_12%,transparent),transparent_55%)] px-6 py-8">
+        <Card className="w-full max-w-md rounded-[18px]">
+          <CardHeader className="gap-4">
+            <div className="flex size-10 items-center justify-center rounded-xl border border-border bg-accent text-accent-foreground">
+              <LockKeyhole className="size-5" />
+            </div>
+            <div>
+              <p className="gold-label">Grup Strateji Workspace</p>
+              <CardTitle className="font-heading text-[1.375rem] font-semibold leading-tight">
+                {title}
+              </CardTitle>
+            </div>
+            <CardDescription className="text-[0.95rem] leading-relaxed">
             {step === "setup"
               ? "İlk girişiniz için kendi şifrenizi belirleyin. Şifre yalnızca bu tarayıcıda güvenli biçimde saklanır."
               : step === "login"
@@ -198,7 +198,7 @@ export function SessionGate({ children }: SessionGateProps) {
             <div className="space-y-2">
               <label
                 htmlFor="username"
-                className="text-base font-medium leading-none"
+                className="text-sm font-medium text-muted-foreground"
               >
                 Kullanıcı adı
               </label>
@@ -215,7 +215,7 @@ export function SessionGate({ children }: SessionGateProps) {
                     setError(null);
                   }
                 }}
-                className="flex h-11 w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-base outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-70"
+                className="sim-input disabled:opacity-70"
                 placeholder="Kullanıcı adınız"
               />
             </div>
@@ -225,7 +225,7 @@ export function SessionGate({ children }: SessionGateProps) {
                 <div className="space-y-2">
                   <label
                     htmlFor="password"
-                    className="text-base font-medium leading-none"
+                    className="text-sm font-medium text-muted-foreground"
                   >
                     {isSetup ? "Yeni şifre" : "Şifre"}
                   </label>
@@ -242,7 +242,7 @@ export function SessionGate({ children }: SessionGateProps) {
                         setError(null);
                       }
                     }}
-                    className="flex h-11 w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-base outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50"
+                    className="sim-input disabled:opacity-50"
                     placeholder={isSetup ? "En az 8 karakter" : "Şifreniz"}
                   />
                 </div>
@@ -251,7 +251,7 @@ export function SessionGate({ children }: SessionGateProps) {
                   <div className="space-y-2">
                     <label
                       htmlFor="confirm-password"
-                      className="text-base font-medium leading-none"
+                      className="text-sm font-medium text-muted-foreground"
                     >
                       Şifre tekrar
                     </label>
@@ -268,7 +268,7 @@ export function SessionGate({ children }: SessionGateProps) {
                           setError(null);
                         }
                       }}
-                      className="flex h-11 w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-base outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50"
+                      className="sim-input disabled:opacity-50"
                       placeholder="Şifrenizi tekrar yazın"
                     />
                     <p className="text-sm text-muted-foreground">

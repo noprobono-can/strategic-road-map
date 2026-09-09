@@ -13,15 +13,15 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
 
   return (
     <div
-      className={`inline-flex items-center rounded-lg border bg-background p-0.5 ${className ?? ""}`}
+      className={`inline-flex items-center gap-0 rounded-full border border-border bg-card p-1 ${className ?? ""}`}
       role="group"
       aria-label="Tema seçimi"
     >
       <Button
         type="button"
         size="sm"
-        variant={theme === "light" ? "secondary" : "ghost"}
-        className="h-9 gap-1.5 px-3 text-sm"
+        variant={theme === "light" ? "default" : "ghost"}
+        className="h-8 rounded-full px-3.5 text-sm"
         aria-pressed={theme === "light"}
         onClick={() => setTheme("light")}
       >
@@ -31,8 +31,8 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       <Button
         type="button"
         size="sm"
-        variant={theme === "dark" ? "secondary" : "ghost"}
-        className="h-9 gap-1.5 px-3 text-sm"
+        variant={theme === "dark" ? "default" : "ghost"}
+        className="h-8 rounded-full px-3.5 text-sm"
         aria-pressed={theme === "dark"}
         onClick={() => setTheme("dark")}
       >

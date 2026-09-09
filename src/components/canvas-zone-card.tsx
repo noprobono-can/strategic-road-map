@@ -38,20 +38,18 @@ export function CanvasZoneCard({
   return (
     <Card
       className={cn(
-        "flex h-full min-h-[240px] flex-col border-dashed bg-card/80 shadow-none",
+        "flex h-full min-h-[240px] flex-col border border-border bg-secondary/70 shadow-none",
         className,
       )}
     >
-      <CardHeader className="gap-1 pb-3">
-        <CardTitle className="text-base font-semibold">{labelTr}</CardTitle>
+      <CardHeader className="gap-1.5 pb-3">
+        <CardTitle className="font-heading text-base font-semibold">{labelTr}</CardTitle>
         {labelEn ? (
-          <CardDescription className="text-xs uppercase tracking-wide">
+          <CardDescription className="gold-label normal-case tracking-[0.12em]">
             {labelEn}
           </CardDescription>
         ) : null}
-        <CardDescription className="text-sm leading-relaxed">
-          {helperTr}
-        </CardDescription>
+        <CardDescription>{helperTr}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col pt-0">
         <ZoneNotesList
@@ -92,27 +90,23 @@ export function RoadmapZoneCard({
   return (
     <Card
       className={cn(
-        "flex h-full min-h-[280px] flex-col border-dashed bg-card/80 shadow-none",
+        "flex h-full min-h-[280px] flex-col border border-border bg-secondary/70 shadow-none",
         className,
       )}
     >
-      <CardHeader className="gap-1 pb-3">
-        <CardTitle className="text-base font-semibold">Yol Haritası</CardTitle>
-        <CardDescription className="text-xs uppercase tracking-wide">
+      <CardHeader className="gap-1.5 pb-3">
+        <CardTitle className="font-heading text-base font-semibold">Yol Haritası</CardTitle>
+        <CardDescription className="gold-label normal-case tracking-[0.12em]">
           Now / Next / Later roadmap
         </CardDescription>
-        <CardDescription className="text-sm leading-relaxed">
-          Şimdi, sonra ve ileride odaklanılacak adımlar.
-        </CardDescription>
+        <CardDescription>Şimdi, sonra ve ileride odaklanılacak adımlar.</CardDescription>
       </CardHeader>
       <CardContent className="grid flex-1 gap-4 pt-0 md:grid-cols-3">
         {columns.map((column) => (
           <div key={column.key} className="flex min-h-[180px] flex-col gap-2">
             <div>
-              <p className="text-sm font-semibold">{column.labelTr}</p>
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                {column.labelEn}
-              </p>
+              <p className="font-heading text-sm font-semibold">{column.labelTr}</p>
+              <p className="gold-label normal-case tracking-[0.1em]">{column.labelEn}</p>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                 {column.helperTr}
               </p>
