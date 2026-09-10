@@ -102,7 +102,10 @@ export function StrategyApp({
       >
         <Menu className="size-4" />
       </SheetTrigger>
-      <SheetContent side="left" className="w-[min(100vw-2rem,320px)] p-0">
+      <SheetContent
+        side="left"
+        className="flex h-full min-h-0 w-[min(100vw-2rem,320px)] flex-col gap-0 overflow-hidden p-0"
+      >
         <SheetHeader className="sr-only">
           <SheetTitle>Grup şirketleri</SheetTitle>
           <SheetDescription>
@@ -144,7 +147,7 @@ export function StrategyApp({
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
         {showCompanyPicker ? (
-          <div className="hidden h-full min-h-0 w-[320px] shrink-0 lg:block">
+          <div className="hidden h-full min-h-0 w-[320px] shrink-0 overflow-hidden lg:block">
             <CompanySidebar
               companies={accessibleCompanies}
               selectedId={selectedCompanyId}

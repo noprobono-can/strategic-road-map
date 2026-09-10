@@ -4,7 +4,6 @@ import { Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Company } from "@/lib/companies";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 
 interface CompanySidebarProps {
@@ -23,11 +22,11 @@ export function CompanySidebar({
   return (
     <aside
       className={cn(
-        "flex h-full w-full flex-col border-r border-border bg-sidebar text-sidebar-foreground",
+        "flex h-full min-h-0 w-full flex-col overflow-hidden border-r border-border bg-sidebar text-sidebar-foreground",
         className,
       )}
     >
-      <div className="px-5 py-5">
+      <div className="shrink-0 px-5 py-5">
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-xl border border-border bg-accent text-accent-foreground">
             <Building2 className="size-5" />
@@ -41,9 +40,9 @@ export function CompanySidebar({
         </div>
       </div>
 
-      <Separator />
+      <Separator className="shrink-0" />
 
-      <ScrollArea className="flex-1 px-3 py-4">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4">
         <nav aria-label="Grup şirketleri" className="space-y-2">
           {companies.map((company, index) => {
             const isSelected = company.id === selectedId;
@@ -78,7 +77,7 @@ export function CompanySidebar({
             );
           })}
         </nav>
-      </ScrollArea>
+      </div>
     </aside>
   );
 }
